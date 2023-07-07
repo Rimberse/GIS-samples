@@ -1,10 +1,20 @@
-import React, { useEffect, useRef, RefObject,} from "react";
+import React, { useEffect, useRef, RefObject, forwardRef, useImperativeHandle } from "react";
 import L, { Map } from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-const LeafletMap = () => {
+interface LeafletMapCreateLayers {
+  addGeoJSON(): void;
+}
+
+const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   let mapElement: RefObject<HTMLDivElement> = useRef(null);
   let map = useRef<Map | null>(null);
+
+  useImperativeHandle(ref, () => ({
+    addGeoJSON() {
+      addGeoJSONLayer();
+    }
+  }));
 
   const initMap = (element: HTMLElement) => {
     const map: Map = L.map(element, {
@@ -28,6 +38,10 @@ const LeafletMap = () => {
     }
   };
 
+  const addGeoJSONLayer = () => {
+    console.log("It works");
+  }
+
   useEffect(() => {
     if (mapElement.current) {
       map.current = initMap(mapElement.current);
@@ -44,6 +58,6 @@ const LeafletMap = () => {
   return (
     <div id="map" ref={mapElement}></div>
   );
-};
+});
 
 export default LeafletMap;
