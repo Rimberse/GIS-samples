@@ -1,10 +1,7 @@
 import React, { useRef } from 'react';
 import './App.css';
 import LeafletMap from './components/LeafletMap';
-
-interface LeafletMapCreateLayers {
-  addGeoJSON(): void;
-}
+import { LeafletMapCreateLayers } from './interfaces/Leaflet';
 
 function App() {
   const leafletMap = useRef<LeafletMapCreateLayers>(null);

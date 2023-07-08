@@ -1,10 +1,7 @@
 import React, { useEffect, useRef, RefObject, forwardRef, useImperativeHandle } from "react";
 import L, { Map } from "leaflet";
 import "leaflet/dist/leaflet.css";
-
-interface LeafletMapCreateLayers {
-  addGeoJSON(): void;
-}
+import { LeafletMapCreateLayers } from '../interfaces/Leaflet';
 
 const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   let mapElement: RefObject<HTMLDivElement> = useRef(null);
