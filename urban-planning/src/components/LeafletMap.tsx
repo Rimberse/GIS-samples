@@ -9,13 +9,15 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   const map = useRef<Map | null>(null);
   const layerGroup = useRef<LayerGroup>();
 
+  // Callable functions from Parent component
   useImperativeHandle(ref, () => ({
     importGeoJSON(geoJSON: GeoJSON) {
       createGeoJSONLayer(geoJSON);
     }
   }));
 
-  const initMap = (element: HTMLElement) => {
+  // Initializes Leaflet map with given tiles
+  const initMap = (element: HTMLElement): Map => {
     const map: Map = L.map(element, {
       // options
     }).setView([48.858373738258386, 2.3518390365783475], 13);
@@ -30,25 +32,44 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
     return map;
   };
 
+  // Removes Leaflet map
   const removeMap = () => {
     if (map.current) {
+      clearLayers();
       map.current.remove();
       map.current = null;
     }
   };
 
+  // Creates a new layer
+  const createLayer = (): LayerGroup => L.layerGroup();
+
+  // Creates GeoJSON layer
   const createGeoJSONLayer = (geoJSON: GeoJSON) => {
-    console.log(geoJSON);
+    if (map.current && layerGroup.current) {
+      L.geoJSON(geoJSON).addTo(layerGroup.current);
+    }
   }
 
+  // Clear layers contained within main LayerGroup
+  const clearLayers = () => {
+    if (layerGroup.current) {
+      layerGroup.current.clearLayers();
+    }
+  }
+
+  // Initializes Leaflet map and creates main LayerGroup
   useEffect(() => {
     if (mapElement.current) {
       map.current = initMap(mapElement.current);
+      layerGroup.current = createLayer();
+      map.current.addLayer(layerGroup.current);
     } else {
       removeMap();
       console.error("Error");
     }
 
+    // Cleanup
     return () => {
       removeMap();
     };
