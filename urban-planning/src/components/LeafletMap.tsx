@@ -1,15 +1,17 @@
 import React, { useEffect, useRef, RefObject, forwardRef, useImperativeHandle } from "react";
-import L, { Map } from "leaflet";
+import L, { LayerGroup, Map } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { LeafletMapCreateLayers } from '../interfaces/Leaflet';
+import { GeoJSON } from 'geojson';
 
 const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
-  let mapElement: RefObject<HTMLDivElement> = useRef(null);
-  let map = useRef<Map | null>(null);
+  const mapElement: RefObject<HTMLDivElement> = useRef(null);
+  const map = useRef<Map | null>(null);
+  const layerGroup = useRef<LayerGroup>();
 
   useImperativeHandle(ref, () => ({
-    addGeoJSON() {
-      addGeoJSONLayer();
+    importGeoJSON(geoJSON: GeoJSON) {
+      createGeoJSONLayer(geoJSON);
     }
   }));
 
@@ -35,8 +37,8 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
     }
   };
 
-  const addGeoJSONLayer = () => {
-    console.log("It works");
+  const createGeoJSONLayer = (geoJSON: GeoJSON) => {
+    console.log(geoJSON);
   }
 
   useEffect(() => {

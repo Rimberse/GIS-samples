@@ -1,5 +1,7 @@
+import { GeoJSON } from "geojson";
+
 interface LeafletMapCreateLayers {
-  addGeoJSON(): void;
+  importGeoJSON(geoJSON: GeoJSON): void;
 }
 
 export type { LeafletMapCreateLayers };
