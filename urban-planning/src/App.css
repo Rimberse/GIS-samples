@@ -38,8 +38,9 @@
 }
 
 #header {
-  font-size: 22px;
+  font-size: 28px;
   font-weight: 600;
+  letter-spacing: 0.5px;
   margin: 2rem;
 }
 

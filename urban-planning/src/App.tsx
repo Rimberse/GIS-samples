@@ -1,16 +1,13 @@
 import React, { useRef, useState } from 'react';
 import './App.css';
 import LeafletMap from './components/LeafletMap';
-import { LeafletMapCreateLayers } from './interfaces/Leaflet';
+import { LeafletMapCreateLayers } from './interfaces/LeafletLayerCreation';
 import { GeoJSON, Feature } from 'geojson';
 import geoJSON from './arrondissements.json';
 import LoadingButton from "@mui/lab/LoadingButton";
 import LocationCityIcon from '@mui/icons-material/LocationCity';
-import { Layer, PathOptions } from 'leaflet';
-
-interface Layers {
-  geoJSONLayer?: Layer
-}
+import { PathOptions } from 'leaflet';
+import { Layers } from './interfaces/LeafletLayers';
 
 function App() {
   const leafletMap = useRef<LeafletMapCreateLayers>(null);

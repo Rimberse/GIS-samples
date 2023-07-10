@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, RefObject, forwardRef, useImperativeHandle } from "react";
 import L, { Layer, LayerGroup, Map, PathOptions } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { LeafletMapCreateLayers } from '../interfaces/Leaflet';
+import { LeafletMapCreateLayers } from '../interfaces/LeafletLayerCreation';
 import { GeoJSON, Feature } from 'geojson';
 
 const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
