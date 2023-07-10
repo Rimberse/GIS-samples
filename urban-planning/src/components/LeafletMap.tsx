@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, RefObject, forwardRef, useImperativeHandle } from "react";
-import L, { LayerGroup, Map } from "leaflet";
+import L, { LayerGroup, Map, PathOptions } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { LeafletMapCreateLayers } from '../interfaces/Leaflet';
-import { GeoJSON } from 'geojson';
+import { GeoJSON, Feature } from 'geojson';
 
 const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   const mapElement: RefObject<HTMLDivElement> = useRef(null);
@@ -11,8 +11,8 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
 
   // Callable functions from Parent component
   useImperativeHandle(ref, () => ({
-    importGeoJSON(geoJSON: GeoJSON) {
-      createGeoJSONLayer(geoJSON);
+    importGeoJSON(geoJSON: GeoJSON, style: (feature?: Feature) => PathOptions) {
+      createGeoJSONLayer(geoJSON, style);
     }
   }));
 
@@ -45,9 +45,12 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   const createLayer = (): LayerGroup => L.layerGroup();
 
   // Creates GeoJSON layer
-  const createGeoJSONLayer = (geoJSON: GeoJSON) => {
+  const createGeoJSONLayer = (geoJSON: GeoJSON, style: (feature?: Feature) => {}) => {
     if (map.current && layerGroup.current) {
-      L.geoJSON(geoJSON).addTo(layerGroup.current);
+      console.log(geoJSON);
+      L.geoJSON(geoJSON, {
+        style
+      }).addTo(layerGroup.current);
     }
   }
 

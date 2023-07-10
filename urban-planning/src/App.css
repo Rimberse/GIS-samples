@@ -37,8 +37,18 @@
   }
 }
 
+#header {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 2rem;
+}
+
 #map {
   width: 75vw;
   height: 75vh;
   margin: 0 auto;
+}
+
+#arrondissementsBtn {
+  margin: 1.5rem;
 }

@@ -1,7 +1,8 @@
-import { GeoJSON } from "geojson";
+import { PathOptions } from "leaflet";
+import { GeoJSON, Feature } from "geojson";
 
 interface LeafletMapCreateLayers {
-  importGeoJSON(geoJSON: GeoJSON): void;
+  importGeoJSON(geoJSON: GeoJSON, style: (feature?: Feature) => PathOptions): void;
 }
 
 export type { LeafletMapCreateLayers };
