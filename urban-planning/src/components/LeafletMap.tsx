@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, RefObject, forwardRef, useImperativeHandle } from "react";
-import L, { LayerGroup, Map, PathOptions } from "leaflet";
+import L, { Layer, LayerGroup, Map, PathOptions } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { LeafletMapCreateLayers } from '../interfaces/Leaflet';
 import { GeoJSON, Feature } from 'geojson';
@@ -11,8 +11,8 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
 
   // Callable functions from Parent component
   useImperativeHandle(ref, () => ({
-    importGeoJSON(geoJSON: GeoJSON, style: (feature?: Feature) => PathOptions) {
-      createGeoJSONLayer(geoJSON, style);
+    importGeoJSON(geoJSON: GeoJSON, style: (feature?: Feature) => PathOptions | PathOptions): Layer {
+        return createGeoJSONLayer(geoJSON, style);
     }
   }));
 
@@ -45,13 +45,16 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   const createLayer = (): LayerGroup => L.layerGroup();
 
   // Creates GeoJSON layer
-  const createGeoJSONLayer = (geoJSON: GeoJSON, style: (feature?: Feature) => {}) => {
+  const createGeoJSONLayer = (geoJSON: GeoJSON, style: (feature?: Feature) => PathOptions | PathOptions): Layer => {
     if (map.current && layerGroup.current) {
-      console.log(geoJSON);
-      L.geoJSON(geoJSON, {
+      const layer = L.geoJSON(geoJSON, {
         style
-      }).addTo(layerGroup.current);
-    }
+      });
+
+      layer.addTo(layerGroup.current);
+      return layer;
+    } else
+      throw new Error("Leaflet map is currently not being displayed");
   }
 
   // Clear layers contained within main LayerGroup
