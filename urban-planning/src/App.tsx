@@ -14,66 +14,76 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [layers, setLayers] = useState({});
 
-  const style = (feature?: Feature): PathOptions => feature!.properties!.c_ar % 2 === 0 ? {color: "#ff0000"} : {color: "#0000ff"};
+  const style = (feature?: Feature): PathOptions => feature!.properties!.c_ar % 2 === 0 ? { color: "#ff0000" } : { color: "#0000ff" };
 
   const onEachFeature = (feature: Feature, layer: Layer) => {
-    if (feature!.properties && feature.properties!.l_ar && feature.properties!.l_aroff && feature.properties.perimetre && feature.properties.surface) {
-      const content = {
-        districtNumber: feature.properties.l_ar,
-        officialName: feature.properties.l_aroff,
-        perimeter: feature.properties.perimetre,
-        surface: feature.properties.surface
-      }
+    const popup: Array<string> = [];
 
-      const popup: Array<String> = [];
-
+    if (feature!.properties && feature!.properties!.l_ar) {
       popup.push(
         "<b>Arrondissement:</b> ",
-        content.districtNumber,
-        "<br>",
-        "<b>Official name:</b> ",
-        content.officialName,
-        "<br>",
-        "<b>Perimeter:</b> ",
-        content.perimeter,
-        "<br>",
-        "<b>Surface:</b> ",
-        content.surface
+        feature.properties.l_ar,
+        "<br>"
       );
-      
-      layer.bindPopup(popup.join(""));
     }
-}
+
+    if (feature!.properties && feature!.properties!.l_aroff) {
+      popup.push(
+        "<b>Official name:</b> ",
+        feature.properties.l_aroff,
+        "<br>"
+      );
+    }
+
+    if (feature!.properties && feature!.properties!.perimetre) {
+      popup.push(
+        "<b>Perimeter:</b> ",
+        feature.properties.perimetre,
+        "<br>",
+      );
+    }
+
+    if (feature!.properties && feature!.properties!.surface) {
+      popup.push(
+        "<b>Surface:</b> ",
+        feature.properties.surface,
+        "<br>"
+      );
+    }
+
+    popup.pop();
+    layer.bindPopup(popup.join(""));
+  }
 
   return (
     <div className="App">
       <header id="header">Urban planning</header>
       <LeafletMap ref={leafletMap} />
-      <LoadingButton id='arrondissementsBtn' 
-      loading={loading}
-      loadingPosition="start" 
-      startIcon={<LocationCityIcon />} 
-      variant="outlined"
-      onClick={() => {
-        if (leafletMap.current) {
-          setLoading(true);
-          
-          setTimeout(() => {
-            const layer = leafletMap.current?.importGeoJSON(geoJSON as GeoJSON, style, onEachFeature);
+      <LoadingButton id='arrondissementsBtn'
+        loading={loading}
+        loadingPosition="start"
+        startIcon={<LocationCityIcon />}
+        variant="outlined"
+        onClick={() => {
+          if (leafletMap.current) {
+            setLoading(true);
 
-            if (layer) {
-              const newLayers: Layers = {
-                geoJSONLayer: layer,
-                ...layers
-              };
+            setTimeout(() => {
+              const layer = leafletMap.current?.importGeoJSON(geoJSON as GeoJSON, style, onEachFeature);
 
-              setLayers(newLayers);
-            }
+              if (layer) {
+                const newLayers: Layers = {
+                  geoJSONLayer: layer,
+                  ...layers
+                };
 
-            setLoading(false);
-          }, 500);
-        }
-      }}>
+                setLayers(newLayers);
+              }
+
+              setLoading(false);
+            }, 500);
+          }
+        }}>
         Arrondissements
       </LoadingButton>
     </div>
