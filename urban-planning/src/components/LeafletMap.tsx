@@ -12,7 +12,11 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
 
   // Callable functions from Parent component
   useImperativeHandle(ref, () => ({
-    importGeoJSON(geoJSON: GeoJSON, style: (feature?: Feature) => PathOptions | PathOptions, onEachFeature: (feature: Feature, layer: Layer) => void): Layer {
+    removeLayer(layer: Layer): boolean {
+      return removeLayer(layer);
+    },
+
+    importGeoJSON(geoJSON: GeoJSON, style: (feature?: Feature) => PathOptions | PathOptions, onEachFeature: (feature: Feature, layer: Layer) => void): LayerGroup {
         return createGeoJSONLayer(geoJSON, style, onEachFeature);
     }
   }));
@@ -45,8 +49,20 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   // Creates a new layer
   const createLayer = (): LayerGroup => L.layerGroup();
 
+  // Removes given layer from main LayerGroup
+  const removeLayer = (layer: Layer): boolean => {
+    if (layerGroup.current && layerGroup.current.hasLayer(layer)) {
+      if (layer instanceof LayerGroup)
+        layer.clearLayers();
+
+      layerGroup.current.removeLayer(layer)
+      return true;
+    } else
+      return false;
+  }
+
   // Creates GeoJSON layer
-  const createGeoJSONLayer = (geoJSON: GeoJSON, style: (feature?: Feature) => PathOptions | PathOptions, onEachFeature: (feature: Feature, layer: Layer) => void): Layer => {
+  const createGeoJSONLayer = (geoJSON: GeoJSON, style: (feature?: Feature) => PathOptions | PathOptions, onEachFeature: (feature: Feature, layer: Layer) => void): LayerGroup => {
     if (map.current && layerGroup.current) {
       console.log(geoJSON);
       const layers: Array<Layer> = [];

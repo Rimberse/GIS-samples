@@ -72,11 +72,13 @@ function App() {
               const layer = leafletMap.current?.importGeoJSON(geoJSON as GeoJSON, style, onEachFeature);
 
               if (layer) {
-                const newLayers: Layers = {
-                  geoJSONLayer: layer,
-                  ...layers
-                };
+                if ((layers as Layers).geoJSONLayer) {
+                  if (!leafletMap.current?.removeLayer((layers as Layers).geoJSONLayer!))
+                    alert('Unable to remove existing GeoJSON layer!');
+                }
 
+                const newLayers: Layers = (layers as Layers);
+                newLayers.geoJSONLayer = layer;
                 setLayers(newLayers);
               }
 

@@ -1,7 +1,7 @@
-import { Layer } from "leaflet";
+import { LayerGroup } from "leaflet";
 
 interface Layers {
-  geoJSONLayer?: Layer;
+  geoJSONLayer?: LayerGroup;
 }
 
 export type { Layers };
