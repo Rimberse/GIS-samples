@@ -3,7 +3,6 @@ import L, { Layer, LayerGroup, Map, PathOptions } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { LeafletMapCreateLayers } from '../interfaces/LeafletLayerCreation';
 import { GeoJSON, Feature, FeatureCollection } from 'geojson';
-import { feature } from "@turf/turf";
 
 const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   const mapElement: RefObject<HTMLDivElement> = useRef(null);

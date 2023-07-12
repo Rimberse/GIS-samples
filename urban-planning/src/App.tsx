@@ -4,6 +4,7 @@ import LeafletMap from './components/LeafletMap';
 import { LeafletMapCreateLayers } from './interfaces/LeafletLayerCreation';
 import { GeoJSON, Feature } from 'geojson';
 import geoJSON from './arrondissements.json';
+import markers from './logements-sociaux-finances-a-paris.json';
 import LoadingButton from "@mui/lab/LoadingButton";
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import { Content, Layer, PathOptions, Popup } from 'leaflet';
