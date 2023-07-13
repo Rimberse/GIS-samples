@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, RefObject, forwardRef, useImperativeHandle } from "react";
-import L, { Icon, LatLng, LatLngExpression, LatLngTuple, Layer, LayerGroup, Map, Marker, PathOptions } from "leaflet";
+import L, { Icon, LatLng, LatLngExpression, LatLngTuple, Layer, LayerGroup, Map, Marker, MarkerClusterGroup, PathOptions } from "leaflet";
 import "leaflet/dist/leaflet.css";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import "leaflet.markercluster/dist/leaflet.markercluster";
 import { LeafletMapCreateLayers } from '../interfaces/LeafletLayerCreation';
 import { GeoJSON, Feature, FeatureCollection, Point, Position } from 'geojson';
 
@@ -27,7 +30,7 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
       return createMarker(coordinates, icon);
     },
 
-    createMarkers(geoJSON: GeoJSON, icon?: Icon): LayerGroup {
+    createMarkers(geoJSON: GeoJSON, icon?: Icon): MarkerClusterGroup {
       return createMarkers(geoJSON, icon);
     }
   }));
@@ -115,21 +118,20 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   }
 
   // Creates a LayerGroup, containing created Markers for given GeoJSON
-  const createMarkers = (geoJSON: GeoJSON, icon?: Icon): LayerGroup => {
+  const createMarkers = (geoJSON: GeoJSON, icon?: Icon): MarkerClusterGroup => {
     if (map.current && layerGroup.current) {
-      const markers: Array<Marker> = [];
+      const markers: MarkerClusterGroup = L.markerClusterGroup();
 
       (geoJSON as FeatureCollection).features.forEach((feature: Feature) => {
         if (feature.geometry && (feature.geometry as Point).coordinates) {
           // Converts GeoJSON's lng-lat (or easting-northing) coordinates to Leaflet's lat-lng (or northing-easting) coordinates
           const coordinates: LatLng = L.GeoJSON.coordsToLatLng((feature.geometry as Point).coordinates as LatLngTuple);
-          markers.push(icon ? createMarker(coordinates, icon) : createMarker(coordinates));
+          markers.addLayer(icon ? createMarker(coordinates, icon) : createMarker(coordinates));
         }
       });
 
-      const layer: LayerGroup = L.layerGroup(markers);
-      layer.addTo(layerGroup.current);
-      return layer;
+      markers.addTo(layerGroup.current);
+      return markers;
     } else
       throw new Error("Leaflet map is currently not being displayed");
   }

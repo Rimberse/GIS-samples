@@ -1,4 +1,4 @@
-import { Layer, LayerGroup, PathOptions, Icon, Marker, LatLngExpression } from "leaflet";
+import { Layer, LayerGroup, PathOptions, Icon, Marker, LatLngExpression, MarkerClusterGroup } from "leaflet";
 import { GeoJSON, Feature } from "geojson";
 
 interface LeafletMapCreateLayers {
@@ -6,7 +6,7 @@ interface LeafletMapCreateLayers {
   importGeoJSON(geoJSON: GeoJSON, style: (feature?: Feature) => PathOptions | PathOptions, onEachFeature: (feature: Feature, layer: Layer) => void): LayerGroup;
   createIcon(url: string, shadowUrl?: string): Icon;
   createMarker(coordinates: LatLngExpression, icon?: Icon): Marker;
-  createMarkers(geoJSON: GeoJSON, icon?: Icon): LayerGroup;
+  createMarkers(geoJSON: GeoJSON, icon?: Icon): MarkerClusterGroup;
 }
 
 export type { LeafletMapCreateLayers };
