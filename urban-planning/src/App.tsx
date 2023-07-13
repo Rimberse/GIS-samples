@@ -90,6 +90,29 @@ function App() {
         }}>
         Arrondissements
       </LoadingButton>
+      
+      <LoadingButton id='publicHousingBtn'
+        loading={loading}
+        loadingPosition="start"
+        startIcon={<HouseIcon />}
+        variant="outlined"
+        onClick={() => {
+          if (leafletMap.current) {
+            setLoading(true);
+
+            setTimeout(() => {
+              const icon = leafletMap.current?.createIcon(require('./building.png'));
+
+              if (icon) {
+                const marker = leafletMap.current?.createMarker([48.80639144441806, 2.326194746313869], icon);
+              }
+
+              setLoading(false);
+            }, 500);
+          }
+        }}>
+        Logements sociaux
+      </LoadingButton>
     </div>
   );
 }
