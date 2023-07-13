@@ -7,6 +7,7 @@ import geoJSON from './arrondissements.json';
 import markers from './logements-sociaux-finances-a-paris.json';
 import LoadingButton from "@mui/lab/LoadingButton";
 import LocationCityIcon from '@mui/icons-material/LocationCity';
+import HouseIcon from '@mui/icons-material/House';
 import { Content, Layer, PathOptions, Popup } from 'leaflet';
 import { Layers } from './interfaces/LeafletLayers';
 

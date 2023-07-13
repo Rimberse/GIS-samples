@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, RefObject, forwardRef, useImperativeHandle } from "react";
-import L, { Icon, Layer, LayerGroup, Map, PathOptions } from "leaflet";
+import L, { Icon, LatLng, LatLngExpression, Layer, LayerGroup, Map, Marker, PathOptions } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { LeafletMapCreateLayers } from '../interfaces/LeafletLayerCreation';
 import { GeoJSON, Feature, FeatureCollection } from 'geojson';
@@ -21,6 +21,10 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
 
     createIcon(url: string, shadowUrl?: string): Icon {
       return createIcon(url, shadowUrl);
+    },
+
+    createMarker(coordinates: LatLngExpression, icon?: Icon): Marker {
+      return createMarker(coordinates, icon);
     }
   }));
 
@@ -97,14 +101,24 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
       iconUrl: url,
       // shadowUrl: shadowUrl,
   
-      iconSize:     [38, 95],   // size of the icon
-      // shadowSize:   [50, 64],   // size of the shadow
-      iconAnchor:   [22, 94],   // point of the icon which will correspond to marker's location
-      // shadowAnchor: [4, 62],    // the same for the shadow
-      popupAnchor:  [-3, -76]   // point from which the popup should open relative to the iconAnchor
+      iconSize:     [50, 50],   // size of the icon
+      // shadowSize:   [50, 50],   // size of the shadow
+      iconAnchor:   [25, 50],   // point of the icon which will correspond to marker's location
+      // shadowAnchor: [3, 27],    // the same for the shadow
+      popupAnchor:  [-7, -35]   // point from which the popup should open relative to the iconAnchor
     });
 
     return icon;
+  }
+
+  // Creates a Marker either with the default Icon or with the provided one
+  const createMarker = (coordinates: LatLngExpression, icon?: Icon): Marker => {
+    if (map.current && layerGroup.current) {
+      const marker: Marker = icon ? L.marker(coordinates, {icon}) : L.marker(coordinates);
+      marker.addTo(layerGroup.current);
+      return marker;
+    } else
+      throw new Error("Leaflet map is currently not being displayed");
   }
 
   // Initializes Leaflet map and creates main LayerGroup
