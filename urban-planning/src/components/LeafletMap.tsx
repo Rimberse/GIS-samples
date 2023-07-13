@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, RefObject, forwardRef, useImperativeHandle } from "react";
-import L, { Icon, LatLngExpression, Layer, LayerGroup, Map, Marker, PathOptions } from "leaflet";
+import L, { Icon, LatLng, LatLngExpression, LatLngTuple, Layer, LayerGroup, Map, Marker, PathOptions } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { LeafletMapCreateLayers } from '../interfaces/LeafletLayerCreation';
 import { GeoJSON, Feature, FeatureCollection, Point, Position } from 'geojson';
@@ -23,7 +23,7 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
       return createIcon(url, shadowUrl);
     },
 
-    createMarker(coordinates: Position, icon?: Icon): Marker {
+    createMarker(coordinates: LatLngExpression, icon?: Icon): Marker {
       return createMarker(coordinates, icon);
     },
 
@@ -120,8 +120,11 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
       const markers: Array<Marker> = [];
 
       (geoJSON as FeatureCollection).features.forEach((feature: Feature) => {
-        if ((feature.geometry! as Point).coordinates)
-          markers.push(icon ? createMarker((feature.geometry! as Point).coordinates, icon) : createMarker((feature.geometry! as Point).coordinates));
+        if (feature.geometry && (feature.geometry as Point).coordinates) {
+          // Converts GeoJSON's lng-lat (or easting-northing) coordinates to Leaflet's lat-lng (or northing-easting) coordinates
+          const coordinates: LatLng = L.GeoJSON.coordsToLatLng((feature.geometry as Point).coordinates as LatLngTuple);
+          markers.push(icon ? createMarker(coordinates, icon) : createMarker(coordinates));
+        }
       });
 
       const layer: LayerGroup = L.layerGroup(markers);
@@ -132,8 +135,8 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   }
 
   // Creates a Marker either with the default Icon or with the provided one
-  const createMarker = (coordinates: Position, icon?: Icon): Marker => {
-    const marker: Marker = icon ? L.marker(coordinates as LatLngExpression, {icon}) : L.marker(coordinates as LatLngExpression);
+  const createMarker = (coordinates: LatLngExpression, icon?: Icon): Marker => {
+    const marker: Marker = icon ? L.marker(coordinates, {icon}) : L.marker(coordinates);
     return marker;
   }
 
