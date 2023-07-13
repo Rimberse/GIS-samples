@@ -71,7 +71,6 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   // Creates GeoJSON layer
   const createGeoJSONLayer = (geoJSON: GeoJSON, style: (feature?: Feature) => PathOptions | PathOptions, onEachFeature: (feature: Feature, layer: Layer) => void): LayerGroup => {
     if (map.current && layerGroup.current) {
-      console.log(geoJSON);
       const layers: Array<Layer> = [];
 
       (geoJSON as FeatureCollection).features.forEach((feature: Feature) => {

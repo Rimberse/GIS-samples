@@ -3,8 +3,8 @@ import './App.css';
 import LeafletMap from './components/LeafletMap';
 import { LeafletMapCreateLayers } from './interfaces/LeafletLayerCreation';
 import { GeoJSON, Feature } from 'geojson';
-import geoJSON from './arrondissements.json';
-import markers from './logements-sociaux-finances-a-paris.json';
+import geoJSON from './resources/geojson/arrondissements.json';
+import markers from './resources/geojson/logements-sociaux-finances-a-paris.json';
 import LoadingButton from "@mui/lab/LoadingButton";
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import HouseIcon from '@mui/icons-material/House';
@@ -90,7 +90,7 @@ function App() {
         }}>
         Arrondissements
       </LoadingButton>
-      
+
       <LoadingButton id='publicHousingBtn'
         loading={loading}
         loadingPosition="start"
@@ -101,7 +101,7 @@ function App() {
             setLoading(true);
 
             setTimeout(() => {
-              const icon = leafletMap.current?.createIcon(require('./building.png'));
+              const icon = leafletMap.current?.createIcon(require('./resources/img/building.png'));
 
               if (icon) {
                 const marker = leafletMap.current?.createMarker([48.80639144441806, 2.326194746313869], icon);
