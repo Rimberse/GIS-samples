@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, RefObject, forwardRef, useImperativeHandle } from "react";
-import L, { Icon, LatLng, LatLngExpression, Layer, LayerGroup, Map, Marker, PathOptions } from "leaflet";
+import L, { Icon, LatLngExpression, Layer, LayerGroup, Map, Marker, PathOptions } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { LeafletMapCreateLayers } from '../interfaces/LeafletLayerCreation';
-import { GeoJSON, Feature, FeatureCollection } from 'geojson';
+import { GeoJSON, Feature, FeatureCollection, Point, Position } from 'geojson';
 
 const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   const mapElement: RefObject<HTMLDivElement> = useRef(null);
@@ -23,8 +23,12 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
       return createIcon(url, shadowUrl);
     },
 
-    createMarker(coordinates: LatLngExpression, icon?: Icon): Marker {
+    createMarker(coordinates: Position, icon?: Icon): Marker {
       return createMarker(coordinates, icon);
+    },
+
+    createMarkers(geoJSON: GeoJSON, icon?: Icon): LayerGroup {
+      return createMarkers(geoJSON, icon);
     }
   }));
 
@@ -110,14 +114,27 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
     return icon;
   }
 
-  // Creates a Marker either with the default Icon or with the provided one
-  const createMarker = (coordinates: LatLngExpression, icon?: Icon): Marker => {
+  // Creates a LayerGroup, containing created Markers for given GeoJSON
+  const createMarkers = (geoJSON: GeoJSON, icon?: Icon): LayerGroup => {
     if (map.current && layerGroup.current) {
-      const marker: Marker = icon ? L.marker(coordinates, {icon}) : L.marker(coordinates);
-      marker.addTo(layerGroup.current);
-      return marker;
+      const markers: Array<Marker> = [];
+
+      (geoJSON as FeatureCollection).features.forEach((feature: Feature) => {
+        if ((feature.geometry! as Point).coordinates)
+          markers.push(icon ? createMarker((feature.geometry! as Point).coordinates, icon) : createMarker((feature.geometry! as Point).coordinates));
+      });
+
+      const layer: LayerGroup = L.layerGroup(markers);
+      layer.addTo(layerGroup.current);
+      return layer;
     } else
       throw new Error("Leaflet map is currently not being displayed");
+  }
+
+  // Creates a Marker either with the default Icon or with the provided one
+  const createMarker = (coordinates: Position, icon?: Icon): Marker => {
+    const marker: Marker = icon ? L.marker(coordinates as LatLngExpression, {icon}) : L.marker(coordinates as LatLngExpression);
+    return marker;
   }
 
   // Initializes Leaflet map and creates main LayerGroup
