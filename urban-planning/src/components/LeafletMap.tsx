@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, RefObject, forwardRef, useImperativeHandle } from "react";
-import L, { Layer, LayerGroup, Map, PathOptions } from "leaflet";
+import L, { Icon, Layer, LayerGroup, Map, PathOptions } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { LeafletMapCreateLayers } from '../interfaces/LeafletLayerCreation';
 import { GeoJSON, Feature, FeatureCollection } from 'geojson';
@@ -17,6 +17,10 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
 
     importGeoJSON(geoJSON: GeoJSON, style: (feature?: Feature) => PathOptions | PathOptions, onEachFeature: (feature: Feature, layer: Layer) => void): LayerGroup {
         return createGeoJSONLayer(geoJSON, style, onEachFeature);
+    },
+
+    createIcon(url: string, shadowUrl?: string): Icon {
+      return createIcon(url, shadowUrl);
     }
   }));
 
@@ -85,6 +89,22 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
     if (layerGroup.current) {
       layerGroup.current.clearLayers();
     }
+  }
+
+  // Creates an Icon with
+  const createIcon = (url: string, shadowUrl?: string): Icon => {
+    const icon: Icon = L.icon({
+      iconUrl: url,
+      // shadowUrl: shadowUrl,
+  
+      iconSize:     [38, 95],   // size of the icon
+      // shadowSize:   [50, 64],   // size of the shadow
+      iconAnchor:   [22, 94],   // point of the icon which will correspond to marker's location
+      // shadowAnchor: [4, 62],    // the same for the shadow
+      popupAnchor:  [-3, -76]   // point from which the popup should open relative to the iconAnchor
+    });
+
+    return icon;
   }
 
   // Initializes Leaflet map and creates main LayerGroup
