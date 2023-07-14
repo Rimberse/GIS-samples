@@ -12,6 +12,7 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   const mapElement: RefObject<HTMLDivElement> = useRef(null);
   const map = useRef<LMap | null>(null);
   const layerGroup = useRef<LayerGroup>();
+  const layerControl = useRef<Control.Layers>();
 
   // Callable functions from Parent component
   useImperativeHandle(ref, () => ({
@@ -163,8 +164,11 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   // Creates Control Layers, which let's to switch between existing base layers and/or overlays
   const createControlLayer = (baseLayers?: Control.LayersObject, overlays?: Control.LayersObject): void => {
     if (map.current && layerGroup.current) {
-      const layerControl: Control.Layers = L.control.layers(baseLayers, overlays);
-      layerControl.addTo(map.current);
+      if (layerControl.current)
+        map.current.removeControl(layerControl.current);
+
+      layerControl.current = L.control.layers(baseLayers, overlays);
+      layerControl.current.addTo(map.current);
     }
   }
 
