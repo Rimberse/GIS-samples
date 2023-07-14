@@ -8,7 +8,7 @@ import markers from './resources/geojson/logements-sociaux-finances-a-paris.json
 import LoadingButton from "@mui/lab/LoadingButton";
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import HouseIcon from '@mui/icons-material/House';
-import { Content, Layer, LayerGroup, PathOptions, Popup } from 'leaflet';
+import { Content, Layer, LayerGroup, PathOptions, Popup, IconOptions } from 'leaflet';
 import { Layers } from './interfaces/LeafletLayers';
 
 function App() {
@@ -101,7 +101,12 @@ function App() {
             setLoading(true);
 
             setTimeout(() => {
-              const icon = leafletMap.current!.createIcon(require('./resources/img/building.png'));
+              const options: IconOptions = {
+                iconUrl: require('./resources/img/building.png')
+              };
+
+              const icon = leafletMap.current!.createIcon(options);
+              console.log(icon);
               const layer = leafletMap.current!.createMarkers(markers as GeoJSON, icon);
 
               if (layer) {

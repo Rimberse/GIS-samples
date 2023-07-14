@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, RefObject, forwardRef, useImperativeHandle } from "react";
-import L, { Icon, LatLng, LatLngExpression, LatLngTuple, Layer, LayerGroup, Map, Marker, MarkerClusterGroup, PathOptions } from "leaflet";
+import L, { Icon, LatLng, LatLngExpression, LatLngTuple, Layer, LayerGroup, Map, Marker, MarkerClusterGroup, PathOptions, IconOptions } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "leaflet.markercluster/dist/leaflet.markercluster";
 import { LeafletMapCreateLayers } from '../interfaces/LeafletLayerCreation';
-import { GeoJSON, Feature, FeatureCollection, Point, Position } from 'geojson';
+import { CustomIcon } from "../classes/LeafletCustomClasses";
+import { GeoJSON, Feature, FeatureCollection, Point } from 'geojson';
 
 const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   const mapElement: RefObject<HTMLDivElement> = useRef(null);
@@ -22,8 +23,8 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
         return createGeoJSONLayer(geoJSON, style, onEachFeature);
     },
 
-    createIcon(url: string, shadowUrl?: string): Icon {
-      return createIcon(url, shadowUrl);
+    createIcon(options: IconOptions): Icon {
+      return createIcon(options);
     },
 
     createMarker(coordinates: LatLngExpression, icon?: Icon): Marker {
@@ -101,19 +102,9 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
     }
   }
 
-  // Creates an Icon with
-  const createIcon = (url: string, shadowUrl?: string): Icon => {
-    const icon: Icon = L.icon({
-      iconUrl: url,
-      // shadowUrl: shadowUrl,
-  
-      iconSize:     [50, 50],   // size of the icon
-      // shadowSize:   [50, 50],   // size of the shadow
-      iconAnchor:   [25, 50],   // point of the icon which will correspond to marker's location
-      // shadowAnchor: [3, 27],    // the same for the shadow
-      popupAnchor:  [-7, -35]   // point from which the popup should open relative to the iconAnchor
-    });
-
+  // Creates an Icon with specified options
+  const createIcon = (options: IconOptions): Icon => {
+    const icon: CustomIcon = new CustomIcon(options);
     return icon;
   }
 
