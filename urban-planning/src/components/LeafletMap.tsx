@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, RefObject, forwardRef, useImperativeHandle } from "react";
-import L, { Icon, LatLng, LatLngExpression, LatLngTuple, Layer, LayerGroup, Map, Marker, MarkerClusterGroup, PathOptions, IconOptions, Popup } from "leaflet";
+import L, { Icon, LatLng, LatLngExpression, LatLngTuple, Layer, LayerGroup, Map as LMap, Marker, MarkerClusterGroup, PathOptions, IconOptions } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
@@ -10,7 +10,7 @@ import { GeoJSON, Feature, FeatureCollection, Point } from 'geojson';
 
 const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   const mapElement: RefObject<HTMLDivElement> = useRef(null);
-  const map = useRef<Map | null>(null);
+  const map = useRef<LMap | null>(null);
   const layerGroup = useRef<LayerGroup>();
 
   // Callable functions from Parent component
@@ -27,18 +27,18 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
       return createIcon(options);
     },
 
-    createMarker(coordinates: LatLngExpression, icon?: Icon, popup?: string): Marker {
-      return createMarker(coordinates, icon);
+    createMarker(coordinates: LatLngExpression, popup?: string, icon?: Icon): Marker {
+      return createMarker(coordinates, popup, icon);
     },
 
-    createMarkers(geoJSON: GeoJSON, icon?: Icon): MarkerClusterGroup {
-      return createMarkers(geoJSON, icon);
+    createMarkers(geoJSON: GeoJSON, popupFeatureProperties?: Map<string, string>, icon?: Icon): MarkerClusterGroup {
+      return createMarkers(geoJSON, popupFeatureProperties, icon);
     }
   }));
 
   // Initializes Leaflet map with given tiles
-  const initMap = (element: HTMLElement): Map => {
-    const map: Map = L.map(element, {
+  const initMap = (element: HTMLElement): LMap => {
+    const map: LMap = L.map(element, {
       // options
     }).setView([48.858373738258386, 2.3518390365783475], 13);
 
@@ -109,7 +109,7 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   }
 
   // Creates a LayerGroup, containing created Markers for given GeoJSON
-  const createMarkers = (geoJSON: GeoJSON, icon?: Icon): MarkerClusterGroup => {
+  const createMarkers = (geoJSON: GeoJSON, popupFeatureProperties?: Map<string, string>, icon?: Icon): MarkerClusterGroup => {
     if (map.current && layerGroup.current) {
       const markers: MarkerClusterGroup = L.markerClusterGroup();
 
@@ -117,7 +117,26 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
         if (feature.geometry && (feature.geometry as Point).coordinates) {
           // Converts GeoJSON's lng-lat (or easting-northing) coordinates to Leaflet's lat-lng (or northing-easting) coordinates
           const coordinates: LatLng = L.GeoJSON.coordsToLatLng((feature.geometry as Point).coordinates as LatLngTuple);
-          markers.addLayer(icon ? createMarker(coordinates, icon) : createMarker(coordinates));
+          const popup: Array<string> = [];
+          let popupContent: string | undefined;
+
+          // Builds popup content using given Map of feature properties
+          if (feature.properties && popupFeatureProperties) {
+            popupFeatureProperties.forEach((value: string, key: string) => {
+              if (feature.properties![key]) {
+                popup.push(
+                  '<b>' + value + ':</b> ',
+                  feature.properties![key],
+                  '<br>'
+                );
+              }
+            });
+
+            popup.pop();
+            popupContent = popup.join('');
+          }
+
+          markers.addLayer(icon ? createMarker(coordinates, popupContent, icon) : createMarker(coordinates, popupContent));
         }
       });
 
@@ -128,8 +147,9 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   }
 
   // Creates a Marker either with the default Icon or with the provided one
-  const createMarker = (coordinates: LatLngExpression, icon?: Icon, popup?: string): Marker => {
+  const createMarker = (coordinates: LatLngExpression, popup?: string, icon?: Icon): Marker => {
     const marker: Marker = icon ? L.marker(coordinates, {icon}) : L.marker(coordinates);
+
     if (popup)
       marker.bindPopup(popup);
 

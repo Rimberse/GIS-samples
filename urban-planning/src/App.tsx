@@ -8,7 +8,7 @@ import markers from './resources/geojson/logements-sociaux-finances-a-paris.json
 import LoadingButton from "@mui/lab/LoadingButton";
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import HouseIcon from '@mui/icons-material/House';
-import { Content, Layer, LayerGroup, PathOptions, Popup, IconOptions } from 'leaflet';
+import { Layer, PathOptions, IconOptions } from 'leaflet';
 import { Layers } from './interfaces/LeafletLayers';
 
 function App() {
@@ -23,7 +23,7 @@ function App() {
 
     if (feature!.properties && feature!.properties!.l_ar) {
       popup.push(
-        "<b>Arrondissement:</b> ",
+        "<b>Numéro d’arrondissement:</b> ",
         feature.properties.l_ar,
         "<br>"
       );
@@ -31,7 +31,7 @@ function App() {
 
     if (feature!.properties && feature!.properties!.l_aroff) {
       popup.push(
-        "<b>Official name:</b> ",
+        "<b>Nom officiel de l’arrondissement:</b> ",
         feature.properties.l_aroff,
         "<br>"
       );
@@ -39,7 +39,7 @@ function App() {
 
     if (feature!.properties && feature!.properties!.perimetre) {
       popup.push(
-        "<b>Perimeter:</b> ",
+        "<b>Périmètre:</b> ",
         feature.properties.perimetre,
         "<br>",
       );
@@ -105,8 +105,20 @@ function App() {
                 iconUrl: require('./resources/img/building.png')
               };
 
+              const popupFeatureProperties = new Map([
+                ['nature_programme', 'Nature de programme'],
+                ['mode_real', 'Mode de réalisation'],
+                ['nb_logmt_total', 'Nombre total de logements financés'],
+                ['nb_plai', 'Dont nombre de logements PLA I'],
+                ['nb_plus', 'Dont nombre de logements PLUS'],
+                ['nb_pluscd', 'Dont nombre de logements PLUS CD'],
+                ['nb_pls', 'Dont nombre de logements PLS'],
+                ['bs', 'Bailleur social'],
+                ['adresse_programme', 'Adresse du programme']
+              ]);
+
               const icon = leafletMap.current!.createIcon(options);
-              const layer = leafletMap.current!.createMarkers(markers as GeoJSON, icon);
+              const layer = leafletMap.current!.createMarkers(markers as GeoJSON, popupFeatureProperties, icon);
 
               if (layer) {
                 if ((layers as Layers).markersLayer) {
