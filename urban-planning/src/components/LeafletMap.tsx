@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, RefObject, forwardRef, useImperativeHandle } from "react";
-import L, { Icon, LatLng, LatLngExpression, LatLngTuple, Layer, LayerGroup, Map as LMap, Marker, MarkerClusterGroup, PathOptions, IconOptions } from "leaflet";
+import L, { Icon, LatLng, LatLngExpression, LatLngTuple, Layer, LayerGroup, Map as LMap, Marker, MarkerClusterGroup, PathOptions, IconOptions, Control } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
@@ -15,6 +15,10 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
 
   // Callable functions from Parent component
   useImperativeHandle(ref, () => ({
+    createControlLayer(baseLayers?: Control.LayersObject, overlays?: Control.LayersObject): void {
+      createControlLayer(baseLayers, overlays);
+    },
+
     removeLayer(layer: Layer): boolean {
       return removeLayer(layer);
     },
@@ -53,7 +57,7 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   };
 
   // Removes Leaflet map
-  const removeMap = () => {
+  const removeMap = (): void => {
     if (map.current) {
       clearLayers();
       map.current.remove();
@@ -96,7 +100,7 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   }
 
   // Clear layers contained within main LayerGroup
-  const clearLayers = () => {
+  const clearLayers = (): void => {
     if (layerGroup.current) {
       layerGroup.current.clearLayers();
     }
@@ -154,6 +158,14 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
       marker.bindPopup(popup);
 
     return marker;
+  }
+
+  // Creates Control Layers, which let's to switch between existing base layers and/or overlays
+  const createControlLayer = (baseLayers?: Control.LayersObject, overlays?: Control.LayersObject): void => {
+    if (map.current && layerGroup.current) {
+      const layerControl: Control.Layers = L.control.layers(baseLayers, overlays);
+      layerControl.addTo(map.current);
+    }
   }
 
   // Initializes Leaflet map and creates main LayerGroup

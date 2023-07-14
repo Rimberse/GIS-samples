@@ -8,7 +8,7 @@ import markers from './resources/geojson/logements-sociaux-finances-a-paris.json
 import LoadingButton from "@mui/lab/LoadingButton";
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import HouseIcon from '@mui/icons-material/House';
-import { Layer, PathOptions, IconOptions } from 'leaflet';
+import { Layer, PathOptions, IconOptions, Control } from 'leaflet';
 import { Layers } from './interfaces/LeafletLayers';
 
 function App() {
