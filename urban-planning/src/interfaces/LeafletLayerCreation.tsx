@@ -5,7 +5,7 @@ interface LeafletMapCreateLayers {
   removeLayer(layer: Layer): boolean;
   importGeoJSON(geoJSON: GeoJSON, style: (feature?: Feature) => PathOptions | PathOptions, onEachFeature: (feature: Feature, layer: Layer) => void): LayerGroup;
   createIcon(options: IconOptions): Icon;
-  createMarker(coordinates: LatLngExpression, icon?: Icon): Marker;
+  createMarker(coordinates: LatLngExpression, icon?: Icon, popup?: string): Marker;
   createMarkers(geoJSON: GeoJSON, icon?: Icon): MarkerClusterGroup;
 }
 

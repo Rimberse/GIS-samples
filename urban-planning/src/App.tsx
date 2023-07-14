@@ -106,10 +106,14 @@ function App() {
               };
 
               const icon = leafletMap.current!.createIcon(options);
-              console.log(icon);
               const layer = leafletMap.current!.createMarkers(markers as GeoJSON, icon);
 
               if (layer) {
+                if ((layers as Layers).markersLayer) {
+                  if (!leafletMap.current?.removeLayer((layers as Layers).markersLayer!))
+                    alert('Unable to remove existing GeoJSON layer!');
+                }
+
                 const newLayers: Layers = (layers as Layers);
                 newLayers.markersLayer = layer;
                 setLayers(newLayers);

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, RefObject, forwardRef, useImperativeHandle } from "react";
-import L, { Icon, LatLng, LatLngExpression, LatLngTuple, Layer, LayerGroup, Map, Marker, MarkerClusterGroup, PathOptions, IconOptions } from "leaflet";
+import L, { Icon, LatLng, LatLngExpression, LatLngTuple, Layer, LayerGroup, Map, Marker, MarkerClusterGroup, PathOptions, IconOptions, Popup } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
@@ -27,7 +27,7 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
       return createIcon(options);
     },
 
-    createMarker(coordinates: LatLngExpression, icon?: Icon): Marker {
+    createMarker(coordinates: LatLngExpression, icon?: Icon, popup?: string): Marker {
       return createMarker(coordinates, icon);
     },
 
@@ -128,8 +128,11 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   }
 
   // Creates a Marker either with the default Icon or with the provided one
-  const createMarker = (coordinates: LatLngExpression, icon?: Icon): Marker => {
+  const createMarker = (coordinates: LatLngExpression, icon?: Icon, popup?: string): Marker => {
     const marker: Marker = icon ? L.marker(coordinates, {icon}) : L.marker(coordinates);
+    if (popup)
+      marker.bindPopup(popup);
+
     return marker;
   }
 
