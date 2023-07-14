@@ -21,6 +21,8 @@ function App() {
     const overlays: Control.LayersObject = {};
     const activeLayers: Layers = layers as Layers;
 
+    baseLayers[LayersControl.mainTileLayer] = leafletMap.current!.getMainTileLayer();
+
     if (activeLayers.geoJSONLayer)
       overlays[LayersControl.geojson] = activeLayers.geoJSONLayer;
 

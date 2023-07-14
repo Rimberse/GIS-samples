@@ -6,6 +6,7 @@ interface Layers {
 }
 
 enum LayersControl {
+  mainTileLayer = 'Mapbox',
   geojson = 'Arrondissements',
   markers = 'Logements sociaux'
 }

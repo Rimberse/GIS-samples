@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, RefObject, forwardRef, useImperativeHandle } from "react";
-import L, { Icon, LatLng, LatLngExpression, LatLngTuple, Layer, LayerGroup, Map as LMap, Marker, MarkerClusterGroup, PathOptions, IconOptions, Control } from "leaflet";
+import L, { Icon, LatLng, LatLngExpression, LatLngTuple, Layer, LayerGroup, Map as LMap, Marker, MarkerClusterGroup, PathOptions, IconOptions, Control, TileLayer } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
@@ -11,11 +11,16 @@ import { GeoJSON, Feature, FeatureCollection, Point } from 'geojson';
 const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   const mapElement: RefObject<HTMLDivElement> = useRef(null);
   const map = useRef<LMap | null>(null);
+  const tileLayer = useRef<TileLayer>();
   const layerGroup = useRef<LayerGroup>();
   const layerControl = useRef<Control.Layers>();
 
   // Callable functions from Parent component
   useImperativeHandle(ref, () => ({
+    getMainTileLayer(): TileLayer {
+      return getMainTileLayer();
+    },
+
     createControlLayer(baseLayers?: Control.LayersObject, overlays?: Control.LayersObject): void {
       createControlLayer(baseLayers, overlays);
     },
@@ -47,13 +52,14 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
       // options
     }).setView([48.858373738258386, 2.3518390365783475], 13);
 
-    L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+    tileLayer.current = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
       maxZoom: 19,
       attribution: 'Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery (c) <a href="https://www.mapbox.com/">Mapbox</a>',
       id: 'mapbox/streets-v11',
       accessToken: process.env.REACT_APP_MAPBOX_ACCESS_TOKEN
-    }).addTo(map);
-
+    })
+    
+    tileLayer.current.addTo(map);
     return map;
   };
 
@@ -65,6 +71,14 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
       map.current = null;
     }
   };
+
+  // Return main TileLayer
+  const getMainTileLayer = (): TileLayer => {
+    if (map.current && tileLayer.current)
+      return tileLayer.current;
+    else
+      throw new Error("Leaflet map is currently not being displayed");
+  }
 
   // Creates a new layer
   const createLayer = (): LayerGroup => L.layerGroup();
