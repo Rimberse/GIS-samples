@@ -9,12 +9,26 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import HouseIcon from '@mui/icons-material/House';
 import { Layer, PathOptions, IconOptions, Control } from 'leaflet';
-import { Layers } from './interfaces/LeafletLayers';
+import { Layers, LayersControl } from './interfaces/LeafletLayers';
 
 function App() {
   const leafletMap = useRef<LeafletMapCreateLayers>(null);
   const [loading, setLoading] = useState(false);
   const [layers, setLayers] = useState({});
+
+  const syncBaseLayersAndOverlays = () => {
+    const baseLayers: Control.LayersObject = {};
+    const overlays: Control.LayersObject = {};
+    const activeLayers: Layers = layers as Layers;
+
+    if (activeLayers.geoJSONLayer)
+      overlays[LayersControl.geojson] = activeLayers.geoJSONLayer;
+
+    if (activeLayers.markersLayer)
+      overlays[LayersControl.markers] = activeLayers.markersLayer;
+
+    leafletMap.current!.createControlLayer(baseLayers, overlays);
+  }
 
   const style = (feature?: Feature): PathOptions => feature!.properties!.c_ar % 2 === 0 ? { color: "#ff0000" } : { color: "#0000ff" };
 
@@ -84,6 +98,7 @@ function App() {
                 setLayers(newLayers);
               }
 
+              syncBaseLayersAndOverlays();
               setLoading(false);
             }, 500);
           }
@@ -131,6 +146,7 @@ function App() {
                 setLayers(newLayers);
               }
 
+              syncBaseLayersAndOverlays();
               setLoading(false);
             }, 500);
           }

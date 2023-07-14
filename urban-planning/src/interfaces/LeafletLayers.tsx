@@ -5,4 +5,10 @@ interface Layers {
   markersLayer?: LayerGroup;
 }
 
+enum LayersControl {
+  geojson = 'Arrondissements',
+  markers = 'Logements sociaux'
+}
+
 export type { Layers };
+export { LayersControl };
