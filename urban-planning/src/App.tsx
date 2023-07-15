@@ -8,10 +8,12 @@ import housingMarkers from './resources/geojson/logements-sociaux-finances-a-par
 import railwayMarkers from './resources/geojson/emplacement-des-gares-idf.json';
 import LoadingButton from "@mui/lab/LoadingButton";
 import LocationCityIcon from '@mui/icons-material/LocationCity';
+import ApartmentIcon from '@mui/icons-material/Apartment';
 import DirectionsSubwayIcon from '@mui/icons-material/DirectionsSubway';
 import HouseIcon from '@mui/icons-material/House';
 import { Layer, PathOptions, IconOptions, Control } from 'leaflet';
 import { Layers, LayersControl } from './interfaces/LeafletLayers';
+import TurfUtils from './classes/TurfUtils';
 
 function App() {
   const leafletMap = useRef<LeafletMapCreateLayers>(null);
@@ -25,8 +27,11 @@ function App() {
 
     baseLayers[LayersControl.mainTileLayer] = leafletMap.current!.getMainTileLayer();
 
-    if (activeLayers.geoJSONLayer)
-      overlays[LayersControl.geojson] = activeLayers.geoJSONLayer;
+    if (activeLayers.parisGeoJSONLayer)
+      overlays[LayersControl.parisGeoJSON] = activeLayers.parisGeoJSONLayer;
+
+    if (activeLayers.arrondissementsGeoJSONLayer)
+      overlays[LayersControl.arrondissementsGeoJSON] = activeLayers.arrondissementsGeoJSONLayer;
 
     if (activeLayers.housingMarkersLayer)
       overlays[LayersControl.housingMarkers] = activeLayers.housingMarkersLayer;
@@ -82,7 +87,8 @@ function App() {
     <div className="App">
       <header id="header">Urban planning</header>
       <LeafletMap ref={leafletMap} />
-      <LoadingButton id='arrondissementsBtn'
+
+      <LoadingButton id='parisBtn'
         loading={loading}
         loadingPosition="start"
         startIcon={<LocationCityIcon />}
@@ -92,16 +98,53 @@ function App() {
             setLoading(true);
 
             setTimeout(() => {
-              const layer = leafletMap.current!.importGeoJSON(geoJSON as GeoJSON, style, onEachFeature);
+              const union: Feature = TurfUtils.union(geoJSON as GeoJSON) as Feature;
+              const unionGeoJSON: GeoJSON = {
+                type: "FeatureCollection",
+                features: [union]
+              };
+
+              const layer = leafletMap.current!.importGeoJSON(unionGeoJSON, style);
 
               if (layer) {
-                if ((layers as Layers).geoJSONLayer) {
-                  if (!leafletMap.current?.removeLayer((layers as Layers).geoJSONLayer!))
+                if ((layers as Layers).parisGeoJSONLayer) {
+                  if (!leafletMap.current?.removeLayer((layers as Layers).parisGeoJSONLayer!))
                     alert('Unable to remove existing GeoJSON layer!');
                 }
 
                 const newLayers: Layers = (layers as Layers);
-                newLayers.geoJSONLayer = layer;
+                newLayers.parisGeoJSONLayer = layer;
+                setLayers(newLayers);
+              }
+
+              syncBaseLayersAndOverlays();
+              setLoading(false);
+            }, 500);
+          }
+        }}>
+        Paris
+      </LoadingButton>
+
+      <LoadingButton id='arrondissementsBtn'
+        loading={loading}
+        loadingPosition="start"
+        startIcon={<ApartmentIcon />}
+        variant="outlined"
+        onClick={() => {
+          if (leafletMap.current) {
+            setLoading(true);
+
+            setTimeout(() => {
+              const layer = leafletMap.current!.importGeoJSON(geoJSON as GeoJSON, style, onEachFeature);
+
+              if (layer) {
+                if ((layers as Layers).arrondissementsGeoJSONLayer) {
+                  if (!leafletMap.current?.removeLayer((layers as Layers).arrondissementsGeoJSONLayer!))
+                    alert('Unable to remove existing GeoJSON layer!');
+                }
+
+                const newLayers: Layers = (layers as Layers);
+                newLayers.arrondissementsGeoJSONLayer = layer;
                 setLayers(newLayers);
               }
 

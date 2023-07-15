@@ -1,16 +1,18 @@
 import { LayerGroup } from "leaflet";
 
 interface Layers {
-  geoJSONLayer?: LayerGroup;
+  parisGeoJSONLayer?: LayerGroup;
+  arrondissementsGeoJSONLayer?: LayerGroup;
   housingMarkersLayer?: LayerGroup;
   railwayMarkersLayer?: LayerGroup;
 }
 
 enum LayersControl {
   mainTileLayer = 'Mapbox',
-  geojson = 'Arrondissements de Paris',
+  parisGeoJSON = 'Paris',
+  arrondissementsGeoJSON = 'Arrondissements de Paris',
   housingMarkers = 'Logements sociaux financés à Paris',
-  railwayMarkers = 'Gares et stations du réseau ferré d\'Île-de-France'
+  railwayMarkers = 'Gares et stations du réseau ferré'
 }
 
 export type { Layers };

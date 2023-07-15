@@ -33,7 +33,7 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
       return removeLayer(layer);
     },
 
-    importGeoJSON(geoJSON: GeoJSON, style: (feature?: Feature) => PathOptions | PathOptions, onEachFeature: (feature: Feature, layer: Layer) => void): LayerGroup {
+    importGeoJSON(geoJSON: GeoJSON, style: (feature?: Feature) => PathOptions | PathOptions, onEachFeature?: (feature: Feature, layer: Layer) => void): LayerGroup {
         return createGeoJSONLayer(geoJSON, style, onEachFeature);
     },
 
@@ -109,7 +109,7 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
   }
 
   // Creates GeoJSON layer
-  const createGeoJSONLayer = (geoJSON: GeoJSON, style: (feature?: Feature) => PathOptions | PathOptions, onEachFeature: (feature: Feature, layer: Layer) => void): LayerGroup => {
+  const createGeoJSONLayer = (geoJSON: GeoJSON, style: (feature?: Feature) => PathOptions | PathOptions, onEachFeature?: (feature: Feature, layer: Layer) => void): LayerGroup => {
     if (map.current && layerGroup.current) {
       const layers: Array<L.GeoJSON> = [];
 
