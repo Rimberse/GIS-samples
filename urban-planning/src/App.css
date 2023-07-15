@@ -50,6 +50,6 @@
   margin: 0 auto;
 }
 
-#arrondissementsBtn {
-  margin: 1.5rem;
+#arrondissementsBtn, #publicHousingBtn, #railwayStopsBtn {
+  margin: 1rem;
 }

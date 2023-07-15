@@ -4,6 +4,7 @@ import { GeoJSON, Feature } from "geojson";
 interface LeafletMapCreateLayers {
   getMainTileLayer(): TileLayer;
   createControlLayer(baseLayers?: Control.LayersObject, overlays?: Control.LayersObject): void;
+  addLayer(layer: Layer): boolean;
   removeLayer(layer: Layer): boolean;
   importGeoJSON(geoJSON: GeoJSON, style: (feature?: Feature) => PathOptions | PathOptions, onEachFeature: (feature: Feature, layer: Layer) => void): LayerGroup;
   createIcon(options: IconOptions): Icon;

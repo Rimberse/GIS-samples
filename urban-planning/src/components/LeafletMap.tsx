@@ -25,6 +25,10 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
       createControlLayer(baseLayers, overlays);
     },
 
+    addLayer(layer: Layer): boolean {
+      return addLayer(layer);
+    },
+
     removeLayer(layer: Layer): boolean {
       return removeLayer(layer);
     },
@@ -82,6 +86,15 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
 
   // Creates a new layer
   const createLayer = (): LayerGroup => L.layerGroup();
+
+  // Adds given layer to main LayerGroup
+  const addLayer = (layer: Layer): boolean => {
+    if (layerGroup.current && !layerGroup.current.hasLayer(layer)) {
+      layerGroup.current.addLayer(layer);
+      return true;
+    } else
+      return false;
+  }
 
   // Removes given layer from main LayerGroup
   const removeLayer = (layer: Layer): boolean => {
@@ -159,7 +172,6 @@ const LeafletMap = forwardRef<LeafletMapCreateLayers, {}>((props, ref) => {
         }
       });
 
-      markers.addTo(layerGroup.current);
       return markers;
     } else
       throw new Error("Leaflet map is currently not being displayed");

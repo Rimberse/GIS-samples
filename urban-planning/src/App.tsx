@@ -2,10 +2,10 @@ import React, { useRef, useState } from 'react';
 import './App.css';
 import LeafletMap from './components/LeafletMap';
 import { LeafletMapCreateLayers } from './interfaces/LeafletLayerCreation';
-import { GeoJSON, Feature } from 'geojson';
+import { GeoJSON, FeatureCollection, Feature } from 'geojson';
 import geoJSON from './resources/geojson/arrondissements.json';
 import housingMarkers from './resources/geojson/logements-sociaux-finances-a-paris.json';
-import railMarkers from './resources/geojson/emplacement-des-gares-idf.json';
+import railwayMarkers from './resources/geojson/emplacement-des-gares-idf.json';
 import LoadingButton from "@mui/lab/LoadingButton";
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import DirectionsSubwayIcon from '@mui/icons-material/DirectionsSubway';
@@ -30,6 +30,9 @@ function App() {
 
     if (activeLayers.housingMarkersLayer)
       overlays[LayersControl.housingMarkers] = activeLayers.housingMarkersLayer;
+
+    if (activeLayers.railwayMarkersLayer)
+      overlays[LayersControl.railwayMarkers] = activeLayers.railwayMarkersLayer;
 
     leafletMap.current!.createControlLayer(baseLayers, overlays);
   }
@@ -121,7 +124,7 @@ function App() {
 
             setTimeout(() => {
               const options: IconOptions = {
-                iconUrl: require('./resources/img/building.png')
+                iconUrl: require('./resources/img/Building.png')
               };
 
               const popupFeatureProperties = new Map([
@@ -145,6 +148,7 @@ function App() {
                     alert('Unable to remove existing GeoJSON layer!');
                 }
 
+                leafletMap.current!.addLayer(layer);
                 const newLayers: Layers = (layers as Layers);
                 newLayers.housingMarkersLayer = layer;
                 setLayers(newLayers);
@@ -158,7 +162,7 @@ function App() {
         Logements sociaux
       </LoadingButton>
 
-      <LoadingButton id='trainStopsBtn'
+      <LoadingButton id='railwayStopsBtn'
         loading={loading}
         loadingPosition="start"
         startIcon={<DirectionsSubwayIcon />}
@@ -207,16 +211,48 @@ function App() {
               const trainIcon = leafletMap.current!.createIcon(trainOptions);
               const tramwayIcon = leafletMap.current!.createIcon(tramwayOptions);
               const valIcon = leafletMap.current!.createIcon(valOptions);
-              const layer = leafletMap.current!.createMarkers(housingMarkers as GeoJSON, popupFeatureProperties, icon);
+
+              const rerGeoJSON: GeoJSON = {
+                "features": (railwayMarkers as FeatureCollection).features.filter((feature: Feature) => feature.properties!.mode === 'RER'),
+                "type": "FeatureCollection"
+              }
+
+              const metroGeoJSON: GeoJSON = {
+                "features": (railwayMarkers as FeatureCollection).features.filter((feature: Feature) => feature.properties!.mode === 'METRO'),
+                "type": "FeatureCollection"
+              }
+
+              const trainGeoJSON: GeoJSON = {
+                "features": (railwayMarkers as FeatureCollection).features.filter((feature: Feature) => feature.properties!.mode === 'TRAIN'),
+                "type": "FeatureCollection"
+              }
+
+              const tramwayGeoJSON: GeoJSON = {
+                "features": (railwayMarkers as FeatureCollection).features.filter((feature: Feature) => feature.properties!.mode === 'TRAMWAY'),
+                "type": "FeatureCollection"
+              }
+
+              const valGeoJSON: GeoJSON = {
+                "features": (railwayMarkers as FeatureCollection).features.filter((feature: Feature) => feature.properties!.mode === 'VAL'),
+                "type": "FeatureCollection"
+              }
+
+              const layer = leafletMap.current!.createMarkers(rerGeoJSON, popupFeatureProperties, rerIcon);
 
               if (layer) {
-                if ((layers as Layers).housingMarkersLayer) {
-                  if (!leafletMap.current?.removeLayer((layers as Layers).housingMarkersLayer!))
+                if ((layers as Layers).railwayMarkersLayer) {
+                  if (!leafletMap.current?.removeLayer((layers as Layers).railwayMarkersLayer!))
                     alert('Unable to remove existing GeoJSON layer!');
                 }
 
+                layer.addLayers(leafletMap.current!.createMarkers(metroGeoJSON, popupFeatureProperties, metroIcon).getLayers());
+                layer.addLayers(leafletMap.current!.createMarkers(trainGeoJSON, popupFeatureProperties, trainIcon).getLayers());
+                layer.addLayers(leafletMap.current!.createMarkers(tramwayGeoJSON, popupFeatureProperties, tramwayIcon).getLayers());
+                layer.addLayers(leafletMap.current!.createMarkers(valGeoJSON, popupFeatureProperties, valIcon).getLayers());
+                leafletMap.current!.addLayer(layer);
+
                 const newLayers: Layers = (layers as Layers);
-                newLayers.housingMarkersLayer = layer;
+                newLayers.railwayMarkersLayer = layer;
                 setLayers(newLayers);
               }
 
@@ -225,7 +261,7 @@ function App() {
             }, 500);
           }
         }}>
-        Logements sociaux
+        Gares et stations
       </LoadingButton>
     </div>
   );
