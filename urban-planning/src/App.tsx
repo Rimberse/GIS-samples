@@ -4,7 +4,8 @@ import LeafletMap from './components/LeafletMap';
 import { LeafletMapCreateLayers } from './interfaces/LeafletLayerCreation';
 import { GeoJSON, Feature } from 'geojson';
 import geoJSON from './resources/geojson/arrondissements.json';
-import markers from './resources/geojson/logements-sociaux-finances-a-paris.json';
+import housingMarkers from './resources/geojson/logements-sociaux-finances-a-paris.json';
+import railMarkers from './resources/geojson/emplacement-des-gares-idf.json';
 import LoadingButton from "@mui/lab/LoadingButton";
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import HouseIcon from '@mui/icons-material/House';
@@ -26,8 +27,8 @@ function App() {
     if (activeLayers.geoJSONLayer)
       overlays[LayersControl.geojson] = activeLayers.geoJSONLayer;
 
-    if (activeLayers.markersLayer)
-      overlays[LayersControl.markers] = activeLayers.markersLayer;
+    if (activeLayers.housingMarkersLayer)
+      overlays[LayersControl.housingMarkers] = activeLayers.housingMarkersLayer;
 
     leafletMap.current!.createControlLayer(baseLayers, overlays);
   }
@@ -135,16 +136,16 @@ function App() {
               ]);
 
               const icon = leafletMap.current!.createIcon(options);
-              const layer = leafletMap.current!.createMarkers(markers as GeoJSON, popupFeatureProperties, icon);
+              const layer = leafletMap.current!.createMarkers(housingMarkers as GeoJSON, popupFeatureProperties, icon);
 
               if (layer) {
-                if ((layers as Layers).markersLayer) {
-                  if (!leafletMap.current?.removeLayer((layers as Layers).markersLayer!))
+                if ((layers as Layers).housingMarkersLayer) {
+                  if (!leafletMap.current?.removeLayer((layers as Layers).housingMarkersLayer!))
                     alert('Unable to remove existing GeoJSON layer!');
                 }
 
                 const newLayers: Layers = (layers as Layers);
-                newLayers.markersLayer = layer;
+                newLayers.housingMarkersLayer = layer;
                 setLayers(newLayers);
               }
 

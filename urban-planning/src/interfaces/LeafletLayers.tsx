@@ -2,13 +2,13 @@ import { LayerGroup } from "leaflet";
 
 interface Layers {
   geoJSONLayer?: LayerGroup;
-  markersLayer?: LayerGroup;
+  housingMarkersLayer?: LayerGroup;
 }
 
 enum LayersControl {
   mainTileLayer = 'Mapbox',
   geojson = 'Arrondissements',
-  markers = 'Logements sociaux'
+  housingMarkers = 'Logements sociaux'
 }
 
 export type { Layers };
