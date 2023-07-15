@@ -8,6 +8,7 @@ import housingMarkers from './resources/geojson/logements-sociaux-finances-a-par
 import railMarkers from './resources/geojson/emplacement-des-gares-idf.json';
 import LoadingButton from "@mui/lab/LoadingButton";
 import LocationCityIcon from '@mui/icons-material/LocationCity';
+import DirectionsSubwayIcon from '@mui/icons-material/DirectionsSubway';
 import HouseIcon from '@mui/icons-material/House';
 import { Layer, PathOptions, IconOptions, Control } from 'leaflet';
 import { Layers, LayersControl } from './interfaces/LeafletLayers';
@@ -136,6 +137,76 @@ function App() {
               ]);
 
               const icon = leafletMap.current!.createIcon(options);
+              const layer = leafletMap.current!.createMarkers(housingMarkers as GeoJSON, popupFeatureProperties, icon);
+
+              if (layer) {
+                if ((layers as Layers).housingMarkersLayer) {
+                  if (!leafletMap.current?.removeLayer((layers as Layers).housingMarkersLayer!))
+                    alert('Unable to remove existing GeoJSON layer!');
+                }
+
+                const newLayers: Layers = (layers as Layers);
+                newLayers.housingMarkersLayer = layer;
+                setLayers(newLayers);
+              }
+
+              syncBaseLayersAndOverlays();
+              setLoading(false);
+            }, 500);
+          }
+        }}>
+        Logements sociaux
+      </LoadingButton>
+
+      <LoadingButton id='trainStopsBtn'
+        loading={loading}
+        loadingPosition="start"
+        startIcon={<DirectionsSubwayIcon />}
+        variant="outlined"
+        onClick={() => {
+          if (leafletMap.current) {
+            setLoading(true);
+
+            setTimeout(() => {
+              const rerOptions: IconOptions = {
+                iconUrl: require('./resources/img/RER.png')
+              };
+
+              const metroOptions: IconOptions = {
+                iconUrl: require('./resources/img/Metro.png')
+              };
+
+              const trainOptions: IconOptions = {
+                iconUrl: require('./resources/img/Transilien.png')
+              };
+
+              const tramwayOptions: IconOptions = {
+                iconUrl: require('./resources/img/Tramway.png')
+              };
+
+              const valOptions: IconOptions = {
+                iconUrl: require('./resources/img/VAL.png')
+              };
+
+              const popupFeatureProperties = new Map([
+                ['nom_gares', 'Nom de la gare/arrêt'],
+                ['mode', 'Type de mode desservant la gare'],
+                ['res_com', 'Nom commercial du réseau desservant la gare/station'],
+                ['exploitant', 'Nom de l\'exploitant de la gare'],
+                ['idf', 'En Île-de-France - 1 [oui], 0 [non]'],
+                ['principal', 'Principales gares - 1 [oui], 0 [non]'],
+                ['tertrain', 'Terminus d\'une ligne (Train) - 1 [oui], 0 [non]'],
+                ['terrer', 'Terminus d\'une ligne (RER) - 1 [oui], 0 [non]'],
+                ['termetro', 'Terminus d\'une ligne (Metro) - 1 [oui], 0 [non]'],
+                ['tertram', 'Terminus d\'une ligne (Tramway) - 1 [oui], 0 [non]'],
+                ['terval', 'Terminus d\'une ligne (VAL ou funiculaire) - 1 [oui], 0 [non]']
+              ]);
+
+              const rerIcon = leafletMap.current!.createIcon(rerOptions);
+              const metroIcon = leafletMap.current!.createIcon(metroOptions);
+              const trainIcon = leafletMap.current!.createIcon(trainOptions);
+              const tramwayIcon = leafletMap.current!.createIcon(tramwayOptions);
+              const valIcon = leafletMap.current!.createIcon(valOptions);
               const layer = leafletMap.current!.createMarkers(housingMarkers as GeoJSON, popupFeatureProperties, icon);
 
               if (layer) {
