@@ -11,7 +11,7 @@ import LocationCityIcon from '@mui/icons-material/LocationCity';
 import ApartmentIcon from '@mui/icons-material/Apartment';
 import DirectionsSubwayIcon from '@mui/icons-material/DirectionsSubway';
 import HouseIcon from '@mui/icons-material/House';
-import { Layer, PathOptions, IconOptions, Control } from 'leaflet';
+import { Layer, LayerGroup, MarkerClusterGroup, PathOptions, Icon, IconOptions, Control } from 'leaflet';
 import { Layers, LayersControl } from './interfaces/LeafletLayers';
 import TurfUtils from './classes/TurfUtils';
 
@@ -44,7 +44,7 @@ function App() {
 
   const style = (feature?: Feature): PathOptions => feature!.properties!.c_ar % 2 === 0 ? { color: "#ff0000" } : { color: "#0000ff" };
 
-  const onEachFeature = (feature: Feature, layer: Layer) => {
+  const onEachFeature = (feature: Feature, layer: Layer): void => {
     const popup: Array<string> = [];
 
     if (feature!.properties && feature!.properties!.l_ar) {
@@ -88,12 +88,7 @@ function App() {
       <header id="header">Urban planning</header>
       <LeafletMap ref={leafletMap} />
 
-      <LoadingButton id='parisBtn'
-        loading={loading}
-        loadingPosition="start"
-        startIcon={<LocationCityIcon />}
-        variant="outlined"
-        onClick={() => {
+      <LoadingButton id='parisBtn' loading={loading} loadingPosition="start" startIcon={<LocationCityIcon />} variant="outlined" onClick={() => {
           if (leafletMap.current) {
             setLoading(true);
 
@@ -104,7 +99,7 @@ function App() {
                 features: [union]
               };
 
-              const layer = leafletMap.current!.importGeoJSON(unionGeoJSON, style);
+              const layer: LayerGroup = leafletMap.current!.createGeoJSONLayer(unionGeoJSON, style);
 
               if (layer) {
                 if ((layers as Layers).parisGeoJSONLayer) {
@@ -115,27 +110,20 @@ function App() {
                 const newLayers: Layers = (layers as Layers);
                 newLayers.parisGeoJSONLayer = layer;
                 setLayers(newLayers);
+                syncBaseLayersAndOverlays();
               }
 
-              syncBaseLayersAndOverlays();
               setLoading(false);
             }, 500);
           }
-        }}>
-        Paris
-      </LoadingButton>
+        }}>Paris</LoadingButton>
 
-      <LoadingButton id='arrondissementsBtn'
-        loading={loading}
-        loadingPosition="start"
-        startIcon={<ApartmentIcon />}
-        variant="outlined"
-        onClick={() => {
+      <LoadingButton id='arrondissementsBtn' loading={loading} loadingPosition="start" startIcon={<ApartmentIcon />} variant="outlined" onClick={() => {
           if (leafletMap.current) {
             setLoading(true);
 
             setTimeout(() => {
-              const layer = leafletMap.current!.importGeoJSON(geoJSON as GeoJSON, style, onEachFeature);
+              const layer: LayerGroup = leafletMap.current!.createGeoJSONLayer(geoJSON as GeoJSON, style, onEachFeature);
 
               if (layer) {
                 if ((layers as Layers).arrondissementsGeoJSONLayer) {
@@ -146,22 +134,15 @@ function App() {
                 const newLayers: Layers = (layers as Layers);
                 newLayers.arrondissementsGeoJSONLayer = layer;
                 setLayers(newLayers);
+                syncBaseLayersAndOverlays();
               }
 
-              syncBaseLayersAndOverlays();
               setLoading(false);
             }, 500);
           }
-        }}>
-        Arrondissements
-      </LoadingButton>
+        }}>Arrondissements</LoadingButton>
 
-      <LoadingButton id='publicHousingBtn'
-        loading={loading}
-        loadingPosition="start"
-        startIcon={<HouseIcon />}
-        variant="outlined"
-        onClick={() => {
+      <LoadingButton id='publicHousingBtn' loading={loading} loadingPosition="start" startIcon={<HouseIcon />} variant="outlined" onClick={() => {
           if (leafletMap.current) {
             setLoading(true);
 
@@ -170,7 +151,7 @@ function App() {
                 iconUrl: require('./resources/img/Building.png')
               };
 
-              const popupFeatureProperties = new Map([
+              const popupFeatureProperties: Map<string, string> = new Map([
                 ['nature_programme', 'Nature de programme'],
                 ['mode_real', 'Mode de réalisation'],
                 ['nb_logmt_total', 'Nombre total de logements financés'],
@@ -182,8 +163,8 @@ function App() {
                 ['adresse_programme', 'Adresse du programme']
               ]);
 
-              const icon = leafletMap.current!.createIcon(options);
-              const layer = leafletMap.current!.createMarkers(housingMarkers as GeoJSON, popupFeatureProperties, icon);
+              const icon: Icon = leafletMap.current!.createIcon(options);
+              const layer: LayerGroup = leafletMap.current!.createMarkers(housingMarkers as GeoJSON, popupFeatureProperties, icon);
 
               if (layer) {
                 if ((layers as Layers).housingMarkersLayer) {
@@ -195,22 +176,15 @@ function App() {
                 const newLayers: Layers = (layers as Layers);
                 newLayers.housingMarkersLayer = layer;
                 setLayers(newLayers);
+                syncBaseLayersAndOverlays();
               }
 
-              syncBaseLayersAndOverlays();
               setLoading(false);
             }, 500);
           }
-        }}>
-        Logements sociaux
-      </LoadingButton>
+        }}>Logements sociaux</LoadingButton>
 
-      <LoadingButton id='railwayStopsBtn'
-        loading={loading}
-        loadingPosition="start"
-        startIcon={<DirectionsSubwayIcon />}
-        variant="outlined"
-        onClick={() => {
+      <LoadingButton id='railwayStopsBtn' loading={loading} loadingPosition="start" startIcon={<DirectionsSubwayIcon />} variant="outlined" onClick={() => {
           if (leafletMap.current) {
             setLoading(true);
 
@@ -235,7 +209,7 @@ function App() {
                 iconUrl: require('./resources/img/VAL.png')
               };
 
-              const popupFeatureProperties = new Map([
+              const popupFeatureProperties: Map<string, string> = new Map([
                 ['nom_gares', 'Nom de la gare/arrêt'],
                 ['mode', 'Type de mode desservant la gare'],
                 ['res_com', 'Nom commercial du réseau desservant la gare/station'],
@@ -249,11 +223,11 @@ function App() {
                 ['terval', 'Terminus d\'une ligne (VAL ou funiculaire) - 1 [oui], 0 [non]']
               ]);
 
-              const rerIcon = leafletMap.current!.createIcon(rerOptions);
-              const metroIcon = leafletMap.current!.createIcon(metroOptions);
-              const trainIcon = leafletMap.current!.createIcon(trainOptions);
-              const tramwayIcon = leafletMap.current!.createIcon(tramwayOptions);
-              const valIcon = leafletMap.current!.createIcon(valOptions);
+              const rerIcon: Icon = leafletMap.current!.createIcon(rerOptions);
+              const metroIcon: Icon = leafletMap.current!.createIcon(metroOptions);
+              const trainIcon: Icon = leafletMap.current!.createIcon(trainOptions);
+              const tramwayIcon: Icon = leafletMap.current!.createIcon(tramwayOptions);
+              const valIcon: Icon = leafletMap.current!.createIcon(valOptions);
 
               const rerGeoJSON: GeoJSON = {
                 "features": (railwayMarkers as FeatureCollection).features.filter((feature: Feature) => feature.properties!.mode === 'RER'),
@@ -280,7 +254,7 @@ function App() {
                 "type": "FeatureCollection"
               }
 
-              const layer = leafletMap.current!.createMarkers(rerGeoJSON, popupFeatureProperties, rerIcon);
+              const layer: MarkerClusterGroup = leafletMap.current!.createMarkers(rerGeoJSON, popupFeatureProperties, rerIcon);
 
               if (layer) {
                 if ((layers as Layers).railwayMarkersLayer) {
@@ -297,15 +271,13 @@ function App() {
                 const newLayers: Layers = (layers as Layers);
                 newLayers.railwayMarkersLayer = layer;
                 setLayers(newLayers);
+                syncBaseLayersAndOverlays();
               }
 
-              syncBaseLayersAndOverlays();
               setLoading(false);
             }, 500);
           }
-        }}>
-        Gares et stations
-      </LoadingButton>
+        }}>Gares et stations</LoadingButton>
     </div>
   );
 }
