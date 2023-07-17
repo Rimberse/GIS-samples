@@ -2,21 +2,29 @@ import React, { useRef, useState, useEffect } from 'react';
 import './App.css';
 import LeafletMap from './components/LeafletMap';
 import { LeafletMapOperations } from './interfaces/LeafletLayerOperations';
-import { Layers, LayersControl } from './interfaces/LeafletLayers';
+import { Layers, LayersControl, TileLayers } from './interfaces/LeafletLayers';
 import { Layer, Control, PathOptions } from 'leaflet';
 import { Feature } from 'geojson';
 
 const App = () => {
   const leafletMap = useRef<LeafletMapOperations>(null);
+  const [tileLayers, setTileLayers] = useState({});
   const [layers, setLayers] = useState({});
 
   // To be completed with each specific user-defines layers
   const syncBaseLayersAndOverlays = () => {
     const baseLayers: Control.LayersObject = {};
     const overlays: Control.LayersObject = {};
+    const activeTileLayers: TileLayers = tileLayers as TileLayers;
     const activeLayers: Layers = layers as Layers;
 
     baseLayers[LayersControl.mainTileLayer] = leafletMap.current!.getMainTileLayer();
+
+    if (activeTileLayers.mundialis_TOPO_OSM_WMS)
+      baseLayers[LayersControl.mundialis_TOPO_OSM_WMS] = activeTileLayers.mundialis_TOPO_OSM_WMS;
+
+    if (activeTileLayers.mundialis_SRTM30_Colored_Hillshade)
+      baseLayers[LayersControl.mundialis_SRTM30_Colored_Hillshade] = activeTileLayers.mundialis_SRTM30_Colored_Hillshade;
 
     if (activeLayers.layer)
       overlays[LayersControl.layer] = activeLayers.layer;
@@ -44,10 +52,22 @@ const App = () => {
   }
 
   useEffect(() => {
-    leafletMap.current!.createWMSTileLayer('http://ows.mundialis.de/services/service?', {
-      layers: 'TOPO-OSM-WMS'
-  });
+    const tileLayers: TileLayers = {
+      mundialis_TOPO_OSM_WMS: leafletMap.current!.createWMSTileLayer('http://ows.mundialis.de/services/service?', {
+        layers: 'TOPO-OSM-WMS'
+      }),
+
+      mundialis_SRTM30_Colored_Hillshade: leafletMap.current!.createWMSTileLayer('http://ows.mundialis.de/services/service?', {
+        layers: 'SRTM30-Colored-Hillshade'
+      })
+    };
+
+    setTileLayers(tileLayers);
   }, []);
+
+  useEffect(() => {
+    syncBaseLayersAndOverlays();
+  }, [tileLayers, layers]);
 
   return (
     <div className="App">
