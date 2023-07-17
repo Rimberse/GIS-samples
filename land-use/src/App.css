@@ -36,3 +36,16 @@
     transform: rotate(360deg);
   }
 }
+
+#header {
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin: 2rem;
+}
+
+#map {
+  width: 75vw;
+  height: 75vh;
+  margin: 0 auto;
+}
