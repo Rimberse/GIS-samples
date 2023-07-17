@@ -26,6 +26,9 @@ const App = () => {
     if (activeTileLayers.mundialis_SRTM30_Colored_Hillshade)
       baseLayers[LayersControl.mundialis_SRTM30_Colored_Hillshade] = activeTileLayers.mundialis_SRTM30_Colored_Hillshade;
 
+    if (activeTileLayers.mundialis_TOPO_WMS_OSM_Overlay_WMS)
+      baseLayers[LayersControl.mundialis_TOPO_WMS_OSM_Overlay_WMS] = activeTileLayers.mundialis_TOPO_WMS_OSM_Overlay_WMS;
+
     if (activeLayers.layer)
       overlays[LayersControl.layer] = activeLayers.layer;
 
@@ -59,6 +62,10 @@ const App = () => {
 
       mundialis_SRTM30_Colored_Hillshade: leafletMap.current!.createWMSTileLayer('http://ows.mundialis.de/services/service?', {
         layers: 'SRTM30-Colored-Hillshade'
+      }),
+
+      mundialis_TOPO_WMS_OSM_Overlay_WMS: leafletMap.current!.createWMSTileLayer('http://ows.mundialis.de/services/service?', {
+        layers: 'TOPO-WMS,OSM-Overlay-WMS'
       })
     };
 
