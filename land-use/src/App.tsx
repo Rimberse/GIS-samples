@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import './App.css';
 import LeafletMap from './components/LeafletMap';
 import { LeafletMapOperations } from './interfaces/LeafletLayerOperations';
@@ -42,6 +42,12 @@ const App = () => {
     popup.pop();
     layer.bindPopup(popup.join(""));
   }
+
+  useEffect(() => {
+    leafletMap.current!.createWMSTileLayer('http://ows.mundialis.de/services/service?', {
+      layers: 'TOPO-OSM-WMS'
+  });
+  }, []);
 
   return (
     <div className="App">

@@ -17,7 +17,7 @@ const LeafletMap = forwardRef<LeafletMapOperations, {}>((props, ref) => {
 
   // Callable functions from Parent component
   useImperativeHandle(ref, () => ({
-    createWMSTileLayer(WMSURL: string, WMSOptions: WMSOptions): TileLayer {
+    createWMSTileLayer(WMSURL: string, WMSOptions?: WMSOptions): TileLayer {
       return createWMSTileLayer(WMSURL, WMSOptions);
     },
 
@@ -81,7 +81,7 @@ const LeafletMap = forwardRef<LeafletMapOperations, {}>((props, ref) => {
   };
 
   // Creates WMS/WMTS Layer
-  const createWMSTileLayer = (WMSURL: string, WMSOptions: WMSOptions): TileLayer => {
+  const createWMSTileLayer = (WMSURL: string, WMSOptions?: WMSOptions): TileLayer => {
     if (map.current) {
       const WMSLayer: TileLayer = L.tileLayer.wms(WMSURL, WMSOptions);
       WMSLayer.addTo(map.current);
