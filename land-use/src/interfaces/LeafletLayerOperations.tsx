@@ -1,7 +1,8 @@
-import { Layer, LayerGroup, PathOptions, Icon, Marker, LatLngExpression, MarkerClusterGroup, IconOptions, Control, TileLayer } from "leaflet";
+import { Layer, LayerGroup, PathOptions, Icon, Marker, LatLngExpression, MarkerClusterGroup, IconOptions, Control, TileLayer, WMSOptions } from "leaflet";
 import { GeoJSON, Feature } from "geojson";
 
 interface LeafletMapOperations {
+  createWMSTileLayer(WMSURL: string, WMSOptions: WMSOptions): TileLayer;
   getMainTileLayer(): TileLayer;
   createControlLayer(baseLayers?: Control.LayersObject, overlays?: Control.LayersObject): void;
   addLayer(layer: Layer): boolean;
