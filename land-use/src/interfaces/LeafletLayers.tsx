@@ -5,7 +5,7 @@ interface TileLayers {
   mundialis_TOPO_OSM_WMS?: TileLayer,
   mundialis_SRTM30_Colored_Hillshade?: TileLayer,
   mundialis_TOPO_WMS_OSM_Overlay_WMS?: TileLayer,
-  copernicus_CGLS_FCOVER300_V1?: TileLayer,
+  copernicus_GLS_LAI300_V1?: TileLayer,
   tileLayer?: TileLayer
 }
 
@@ -15,16 +15,27 @@ interface Layers {
   // more user-defines layers..
 }
 
+// Represents WMTS TileLayer options
+interface WMTSLayerOptions {
+  Layer?: string, 
+  TIME?: string, 
+  TileMatrixSet?: string, 
+  TileMatrix?: number, 
+  TileRow?: number, 
+  TileCol?: number, 
+  maxZoom?: number,
+}
+
 // Used with Leaflet's Control Layer
 enum LayersControl {
   mainTileLayer = 'Mapbox',
   mundialis_TOPO_OSM_WMS = 'Topography',
   mundialis_SRTM30_Colored_Hillshade = 'Colored Hillshade',
   mundialis_TOPO_WMS_OSM_Overlay_WMS = 'Topography, then places',
-  copernicus_CGLS_FCOVER300_V1 = 'CGLS_FCOVER300_V1',
+  copernicus_GLS_LAI300_V1 = 'GLS_LAI300_V1',
   layer = 'Layer'
   // more user-defines mappings for layer names in Control pane
 }
 
-export type { TileLayers, Layers };
+export type { TileLayers, Layers, WMTSLayerOptions };
 export { LayersControl };

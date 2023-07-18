@@ -7,6 +7,7 @@ import "leaflet.markercluster/dist/leaflet.markercluster";
 import { LeafletMapOperations } from '../interfaces/LeafletLayerOperations';
 import { CustomIcon } from "../classes/LeafletCustomClasses";
 import { GeoJSON, Feature, FeatureCollection, Point } from 'geojson';
+import { WMTSLayerOptions } from "../interfaces/LeafletLayers";
 
 const LeafletMap = forwardRef<LeafletMapOperations, {}>((props, ref) => {
   const mapElement: RefObject<HTMLDivElement> = useRef(null);
@@ -17,7 +18,7 @@ const LeafletMap = forwardRef<LeafletMapOperations, {}>((props, ref) => {
 
   // Callable functions from Parent component
   useImperativeHandle(ref, () => ({
-    createTileLayer(URL: string, options?: TileLayerOptions): TileLayer {
+    createTileLayer(URL: string, options?: WMTSLayerOptions): TileLayer {
       return createTileLayer(URL, options);
     },
 
@@ -85,7 +86,7 @@ const LeafletMap = forwardRef<LeafletMapOperations, {}>((props, ref) => {
   };
 
   // Creates TileLayer
-  const createTileLayer = (URL: string, options?: TileLayerOptions): TileLayer => {
+  const createTileLayer = (URL: string, options?: WMTSLayerOptions): TileLayer => {
     if (map.current) {
       const tileLayer: TileLayer = L.tileLayer(URL, options);
       tileLayer.addTo(map.current);
