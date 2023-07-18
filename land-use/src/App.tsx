@@ -71,11 +71,7 @@ const App = () => {
         layers: 'TOPO-WMS,OSM-Overlay-WMS'
       }),
 
-      copernicus_CGLS_FCOVER300_V1: leafletMap.current!.createWMSTileLayer('https://proba-v-mep.esa.int/applications/geo-viewer/app/mapcache/wmts/1.0.0/CGLS_FCOVER300_V1/default/2023-07-10/g3857/2/1/1.png', {
-        layers: 'CGLS_FCOVER300_V1',
-        version: '1.0.0',
-        format: 'image/png'
-      }),
+      
     };
 
     setTileLayers(tileLayers);

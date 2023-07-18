@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, RefObject, forwardRef, useImperativeHandle } from "react";
-import L, { Icon, LatLng, LatLngExpression, LatLngTuple, Layer, LayerGroup, Map as LMap, Marker, MarkerClusterGroup, PathOptions, IconOptions, Control, TileLayer, WMSOptions } from "leaflet";
+import L, { Icon, LatLng, LatLngExpression, LatLngTuple, Layer, LayerGroup, Map as LMap, Marker, MarkerClusterGroup, PathOptions, IconOptions, Control, TileLayer, WMSOptions, TileLayerOptions } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
@@ -17,6 +17,10 @@ const LeafletMap = forwardRef<LeafletMapOperations, {}>((props, ref) => {
 
   // Callable functions from Parent component
   useImperativeHandle(ref, () => ({
+    createTileLayer(URL: string, options?: TileLayerOptions): TileLayer {
+      return createTileLayer(URL, options);
+    },
+
     createWMSTileLayer(WMSURL: string, WMSOptions?: WMSOptions): TileLayer {
       return createWMSTileLayer(WMSURL, WMSOptions);
     },
@@ -79,6 +83,16 @@ const LeafletMap = forwardRef<LeafletMapOperations, {}>((props, ref) => {
       map.current = null;
     }
   };
+
+  // Creates TileLayer
+  const createTileLayer = (URL: string, options?: TileLayerOptions): TileLayer => {
+    if (map.current) {
+      const tileLayer: TileLayer = L.tileLayer(URL, options);
+      tileLayer.addTo(map.current);
+      return tileLayer;
+    } else
+      throw new Error("Leaflet map is currently not being displayed");
+  }
 
   // Creates WMS/WMTS Layer
   const createWMSTileLayer = (WMSURL: string, WMSOptions?: WMSOptions): TileLayer => {
