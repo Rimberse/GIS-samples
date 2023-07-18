@@ -4,7 +4,8 @@ import { LayerGroup, TileLayer } from "leaflet";
 interface TileLayers {
   mundialis_TOPO_OSM_WMS?: TileLayer,
   mundialis_SRTM30_Colored_Hillshade?: TileLayer,
-  mundialis_TOPO_WMS_OSM_Overlay_WMS?: TileLayer
+  mundialis_TOPO_WMS_OSM_Overlay_WMS?: TileLayer,
+  tileLayer?: TileLayer
 }
 
 // Used to keep track of created layers
@@ -16,9 +17,9 @@ interface Layers {
 // Used with Leaflet's Control Layer
 enum LayersControl {
   mainTileLayer = 'Mapbox',
-  mundialis_TOPO_OSM_WMS = 'Mundialis TOPO-OSM-WMS',
-  mundialis_SRTM30_Colored_Hillshade = 'SRTM30-Colored-Hillshade',
-  mundialis_TOPO_WMS_OSM_Overlay_WMS = 'TOPO-WMS and OSM-Overlay-WMS',
+  mundialis_TOPO_OSM_WMS = 'Topography',
+  mundialis_SRTM30_Colored_Hillshade = 'Colored Hillshade',
+  mundialis_TOPO_WMS_OSM_Overlay_WMS = 'Topography, then places',
   layer = 'Layer'
   // more user-defines mappings for layer names in Control pane
 }
