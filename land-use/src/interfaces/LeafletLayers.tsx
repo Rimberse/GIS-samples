@@ -5,6 +5,7 @@ interface TileLayers {
   mundialis_TOPO_OSM_WMS?: TileLayer,
   mundialis_SRTM30_Colored_Hillshade?: TileLayer,
   mundialis_TOPO_WMS_OSM_Overlay_WMS?: TileLayer,
+  copernicus_CGLS_FCOVER300_V1?: TileLayer,
   tileLayer?: TileLayer
 }
 
@@ -20,6 +21,7 @@ enum LayersControl {
   mundialis_TOPO_OSM_WMS = 'Topography',
   mundialis_SRTM30_Colored_Hillshade = 'Colored Hillshade',
   mundialis_TOPO_WMS_OSM_Overlay_WMS = 'Topography, then places',
+  copernicus_CGLS_FCOVER300_V1 = 'CGLS_FCOVER300_V1',
   layer = 'Layer'
   // more user-defines mappings for layer names in Control pane
 }

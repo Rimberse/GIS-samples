@@ -29,6 +29,9 @@ const App = () => {
     if (activeTileLayers.mundialis_TOPO_WMS_OSM_Overlay_WMS)
       baseLayers[LayersControl.mundialis_TOPO_WMS_OSM_Overlay_WMS] = activeTileLayers.mundialis_TOPO_WMS_OSM_Overlay_WMS;
 
+    if (activeTileLayers.copernicus_CGLS_FCOVER300_V1)
+      baseLayers[LayersControl.copernicus_CGLS_FCOVER300_V1] = activeTileLayers.copernicus_CGLS_FCOVER300_V1;
+
     if (activeLayers.layer)
       overlays[LayersControl.layer] = activeLayers.layer;
 
@@ -66,7 +69,13 @@ const App = () => {
 
       mundialis_TOPO_WMS_OSM_Overlay_WMS: leafletMap.current!.createWMSTileLayer('http://ows.mundialis.de/services/service?', {
         layers: 'TOPO-WMS,OSM-Overlay-WMS'
-      })
+      }),
+
+      copernicus_CGLS_FCOVER300_V1: leafletMap.current!.createWMSTileLayer('https://proba-v-mep.esa.int/applications/geo-viewer/app/mapcache/wmts/1.0.0/CGLS_FCOVER300_V1/default/2023-07-10/g3857/2/1/1.png', {
+        layers: 'CGLS_FCOVER300_V1',
+        version: '1.0.0',
+        format: 'image/png'
+      }),
     };
 
     setTileLayers(tileLayers);
