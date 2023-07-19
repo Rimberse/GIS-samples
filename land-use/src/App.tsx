@@ -20,6 +20,12 @@ const App = () => {
 
     baseLayers[LayersControl.mainTileLayer] = leafletMap.current!.getMainTileLayer();
 
+    if (activeTileLayers.copernicus_GLS_LAI300_V1)
+      baseLayers[LayersControl.copernicus_GLS_LAI300_V1] = activeTileLayers.copernicus_GLS_LAI300_V1;
+
+    if (activeTileLayers.spectatorEarthSentinel2)
+      baseLayers[LayersControl.spectatorEarthSentinel2] = activeTileLayers.spectatorEarthSentinel2;
+
     if (activeTileLayers.mundialis_TOPO_OSM_WMS)
       baseLayers[LayersControl.mundialis_TOPO_OSM_WMS] = activeTileLayers.mundialis_TOPO_OSM_WMS;
 
@@ -28,9 +34,6 @@ const App = () => {
 
     if (activeTileLayers.mundialis_TOPO_WMS_OSM_Overlay_WMS)
       baseLayers[LayersControl.mundialis_TOPO_WMS_OSM_Overlay_WMS] = activeTileLayers.mundialis_TOPO_WMS_OSM_Overlay_WMS;
-
-    if (activeTileLayers.copernicus_GLS_LAI300_V1)
-      baseLayers[LayersControl.copernicus_GLS_LAI300_V1] = activeTileLayers.copernicus_GLS_LAI300_V1;
 
     if (activeLayers.layer)
       overlays[LayersControl.layer] = activeLayers.layer;
@@ -59,6 +62,22 @@ const App = () => {
 
   useEffect(() => {
     const tileLayers: TileLayers = {
+      copernicus_GLS_LAI300_V1: leafletMap.current!.createTileLayer('https://proba-v-mep.esa.int/applications/geo-viewer/app/mapcache/wmts/1.0.0/{Layer}/default/{TIME}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png', {
+        Layer: "CGLS_LAI300_V1", 
+        TIME: "2023-07-10", 
+        TileMatrixSet: "g3857", 
+        TileMatrix: 7, 
+        TileRow: 20, 
+        TileCol: 22, 
+        maxZoom: 19,
+      }),
+
+      spectatorEarthSentinel2: leafletMap.current!.createTileLayer('https://api.spectator.earth/imagery/{imageId}/tiles/{z}/{x}/{y}/?bands_formula={bandsFormula}&api_key={apiKey}', {
+        imageId: '32885258',
+        apiKey: process.env.REACT_APP_SPECTATOR_EARTH_API_KEY,
+        bandsFormula: encodeURIComponent('b04,b03,b02')
+      }),
+
       mundialis_TOPO_OSM_WMS: leafletMap.current!.createWMSTileLayer('http://ows.mundialis.de/services/service?', {
         layers: 'TOPO-OSM-WMS'
       }),
@@ -69,17 +88,7 @@ const App = () => {
 
       mundialis_TOPO_WMS_OSM_Overlay_WMS: leafletMap.current!.createWMSTileLayer('http://ows.mundialis.de/services/service?', {
         layers: 'TOPO-WMS,OSM-Overlay-WMS'
-      }),
-
-      copernicus_GLS_LAI300_V1: leafletMap.current!.createTileLayer('https://proba-v-mep.esa.int/applications/geo-viewer/app/mapcache/wmts/1.0.0/{Layer}/default/{TIME}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png', {
-        Layer: "CGLS_LAI300_V1", 
-        TIME: "2023-07-10", 
-        TileMatrixSet: "g3857", 
-        TileMatrix: 7, 
-        TileRow: 20, 
-        TileCol: 22, 
-        maxZoom: 19,
-      }),
+      })
     };
 
     setTileLayers(tileLayers);
