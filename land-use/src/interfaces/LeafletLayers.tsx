@@ -6,7 +6,6 @@ interface TileLayers {
   mundialis_SRTM30_Colored_Hillshade?: TileLayer,
   mundialis_TOPO_WMS_OSM_Overlay_WMS?: TileLayer,
   copernicus_GLS_LAI300_V1?: TileLayer,
-  spectatorEarthSentinel2?: TileLayer,
   tileLayer?: TileLayer
 }
 
@@ -36,8 +35,7 @@ enum LayersControl {
   mundialis_TOPO_OSM_WMS = 'Topography',
   mundialis_SRTM30_Colored_Hillshade = 'Colored Hillshade',
   mundialis_TOPO_WMS_OSM_Overlay_WMS = 'Topography, then places',
-  copernicus_GLS_LAI300_V1 = 'GLS_LAI300_V1',
-  spectatorEarthSentinel2 = 'Sentinel 2B NDVI',
+  copernicus_GLS_LAI300_V1 = 'Copernicus land cover',
   layer = 'Layer'
   // more user-defines mappings for layer names in Control pane
 }
