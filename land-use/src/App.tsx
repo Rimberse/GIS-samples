@@ -65,7 +65,7 @@ const App = () => {
         TileMatrixSet: "g3857", 
         TileMatrix: 7, 
         TileRow: 20, 
-        TileCol: 22, 
+        TileCol: 32, 
         maxZoom: 19,
       }),
 
