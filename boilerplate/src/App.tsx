@@ -1,22 +1,27 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import './App.css';
 import LeafletMap from './components/LeafletMap';
 import { LeafletMapOperations } from './interfaces/LeafletLayerOperations';
-import { Layers, LayersControl } from './interfaces/LeafletLayers';
+import { Layers, LayersControl, TileLayers } from './interfaces/LeafletLayers';
 import { Layer, Control, PathOptions } from 'leaflet';
 import { Feature } from 'geojson';
 
 const App = () => {
   const leafletMap = useRef<LeafletMapOperations>(null);
+  const [tileLayers, setTileLayers] = useState({});
   const [layers, setLayers] = useState({});
 
   // To be completed with each specific user-defines layers
   const syncBaseLayersAndOverlays = () => {
     const baseLayers: Control.LayersObject = {};
     const overlays: Control.LayersObject = {};
+    const activeTileLayers: TileLayers = tileLayers as TileLayers;
     const activeLayers: Layers = layers as Layers;
 
     baseLayers[LayersControl.mainTileLayer] = leafletMap.current!.getMainTileLayer();
+
+    if (activeTileLayers.tileLayer)
+      baseLayers[LayersControl.tileLayer] = activeTileLayers.tileLayer;
 
     if (activeLayers.layer)
       overlays[LayersControl.layer] = activeLayers.layer;
@@ -42,6 +47,21 @@ const App = () => {
     popup.pop();
     layer.bindPopup(popup.join(""));
   }
+
+  useEffect(() => {
+    const tileLayers: TileLayers = {
+      // Fetch WMS/WMTS TileLayer
+      tileLayer: leafletMap.current!.createWMSTileLayer('http://wms_or_wmts_url?', {
+        layers: 'layerName'
+      })
+    };
+
+    setTileLayers(tileLayers);
+  }, []);
+
+  useEffect(() => {
+    syncBaseLayersAndOverlays();
+  }, [tileLayers, layers]);
 
   return (
     <div className="App">

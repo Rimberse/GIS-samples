@@ -29,6 +29,7 @@ interface WMTSLayerOptions {
 // Used with Leaflet's Control Layer
 enum LayersControl {
   mainTileLayer = 'Mapbox',
+  tileLayer = 'TileLayer',
   layer = 'Layer'
   // more user-defines mappings for layer names in Control pane
 }
